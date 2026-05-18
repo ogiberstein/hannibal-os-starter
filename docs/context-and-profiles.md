@@ -19,5 +19,5 @@ Prefer explicit source lists over broad implicit memory. Treat memory and summar
 ## Example profile types
 
 - Chief-of-Staff: cross-project triage, reminders, summaries, status discipline.
-- Project Operator: project-specific execution, docs, evidence, and handoff.
+- Project Agent: project-specific execution, docs, evidence, and handoff.
 - Reviewer: adversarial review, readiness checks, leak checks, and go/no-go calls.

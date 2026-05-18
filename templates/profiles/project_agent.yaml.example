@@ -11,9 +11,11 @@ tools:
   - terminal_read_only
 risk_posture:
   ask_before:
-    - destructive_commands
     - production_changes
     - credential_changes
+    - permission_changes
+    - data_deletion
+    - spending
     - external_messages
 deliver_to: project-channel
 status_artifacts:

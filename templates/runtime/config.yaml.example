@@ -1,5 +1,5 @@
 runtime:
-  name: RUNTIME_NAME_HERE
+  name: hermes
   home: LOCAL_RUNTIME_HOME_HERE
   workspace: LOCAL_WORKSPACE_DIR_HERE
 
@@ -14,4 +14,4 @@ safety:
     - external_messages
 
 profiles:
-  directory: templates/profiles
+  directory: profiles

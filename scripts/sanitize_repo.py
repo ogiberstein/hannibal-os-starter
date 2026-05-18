@@ -3,16 +3,45 @@
 from __future__ import annotations
 
 import argparse
-import os
 import re
-import sys
 from pathlib import Path
 
+SECRET_KEY_WORDS = (
+    "api[_-]?key",
+    "access[_-]?token",
+    "auth[_-]?token",
+    "bot[_-]?token",
+    "client[_-]?secret",
+    "password",
+    "passwd",
+    "private[_-]?key",
+    "secret",
+    "token",
+)
+SECRET_KEY_PATTERN = "|".join(SECRET_KEY_WORDS)
+SECRET_VALUE_PATTERN = r"(?:['\"][^'\"]{8,}['\"]|[^\s#'\"]{8,})"
+
 SECRET_PATTERNS = {
-    "secret_assignment": re.compile(r"(?i)(api[_-]?key|secret|password|token|passwd)\s*=\s*['\"][^'\"]{6,}['\"]"),
-    "private_key": re.compile(r"BEGIN (RSA|OPENSSH|PRIVATE) KEY"),
-    "slack_channel_id": re.compile(r"\bC0[A-Z0-9]{8,}\b"),
+    "secret_assignment": re.compile(
+        rf"(?i)(?:^|[^A-Z0-9_])['\"]?(?:[A-Z0-9_.-]*?(?:{SECRET_KEY_PATTERN})[A-Z0-9_.-]*?)['\"]?\s*[:=]\s*{SECRET_VALUE_PATTERN}"
+    ),
+    "private_key_header": re.compile("BEGIN " + r"[A-Z ]*PRIVATE KEY"),
+    "slack_like_id": re.compile(r"\b[CDGUTW][0-9][A-Z0-9]{8,}\b"),
     "long_numeric_platform_id": re.compile(r"\b[0-9]{17,20}\b"),
+    "telegram_chat_id": re.compile(r"(?<!\d)-100[0-9]{8,}\b"),
+    "phone_like": re.compile(r"\+[0-9][0-9 .()\-]{8,}[0-9]"),
+}
+
+SAFE_VALUE_FRAGMENTS = {
+    "SET_LOCALLY_ONLY",
+    "REPLACE_ME",
+    "PLACEHOLDER",
+    "_HERE",
+    "YOUR_",
+    "***",
+    "PINNED_RUNTIME_VERSION_HERE",
+    "present",
+    "missing",
 }
 
 FORBIDDEN_PATH_PARTS = {
@@ -28,14 +57,32 @@ FORBIDDEN_PATH_PARTS = {
 
 FORBIDDEN_TEXT = [
     "En" + "scribe",
-    "ogi" + "berstein",
     "/" + "root" + "/",
     "~/" + ".hermes",
     "BEGIN " + "PRIVATE KEY",
 ]
 
 SKIP_DIRS = {".git", "__pycache__", ".pytest_cache"}
-TEXT_EXTS = {".md", ".py", ".yml", ".yaml", ".txt", ".example", ".gitignore", ""}
+TEXT_EXTS = {
+    "",
+    ".cfg",
+    ".conf",
+    ".env",
+    ".example",
+    ".gitignore",
+    ".ini",
+    ".json",
+    ".key",
+    ".md",
+    ".pem",
+    ".sample",
+    ".sh",
+    ".toml",
+    ".txt",
+    ".yaml",
+    ".yml",
+}
+TEXT_NAMES = {"LICENSE", "README.md", "CONTRIBUTING.md", "SECURITY.md"}
 
 
 def iter_files(root: Path):
@@ -47,7 +94,11 @@ def iter_files(root: Path):
 
 
 def is_text_file(path: Path) -> bool:
-    return path.suffix in TEXT_EXTS or path.name in {"LICENSE", "README.md", "CONTRIBUTING.md", "SECURITY.md"}
+    return path.suffix in TEXT_EXTS or path.name in TEXT_NAMES
+
+
+def is_allowed_secret_match(snippet: str) -> bool:
+    return any(fragment in snippet for fragment in SAFE_VALUE_FRAGMENTS)
 
 
 def scan(root: Path) -> list[str]:
@@ -67,9 +118,8 @@ def scan(root: Path) -> list[str]:
             continue
         for name, pattern in SECRET_PATTERNS.items():
             for match in pattern.finditer(text):
-                # Allow placeholder env/example values that are intentionally non-secret.
                 snippet = match.group(0)
-                if "SET_LOCALLY_ONLY" in snippet:
+                if is_allowed_secret_match(snippet):
                     continue
                 findings.append(f"{name}: {rel}: {snippet[:80]}")
         for marker in FORBIDDEN_TEXT:

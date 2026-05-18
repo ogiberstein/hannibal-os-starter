@@ -12,7 +12,9 @@ risk_posture:
   ask_before:
     - production_changes
     - credential_changes
+    - permission_changes
     - data_deletion
+    - spending
     - external_messages
 deliver_to: chief-of-staff-default
 status_artifacts:

@@ -13,7 +13,7 @@ routes:
   - label: project-channel
     platform: slack
     target: CHANNEL_ID_HERE
-    profile: project_operator
+    profile: project_agent
 ```
 
 Bad:
