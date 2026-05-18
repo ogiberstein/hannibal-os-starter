@@ -1,0 +1,10 @@
+routes:
+  - label: chief-of-staff-default
+    platform: PLATFORM_NAME_HERE
+    target: CHANNEL_ID_HERE
+    profile: chief_of_staff
+
+  - label: project-channel
+    platform: PLATFORM_NAME_HERE
+    target: PROJECT_CHANNEL_ID_HERE
+    profile: project_agent

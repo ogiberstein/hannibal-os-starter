@@ -1,0 +1,21 @@
+name: project_agent
+role: Project-specific execution and evidence-backed status
+sources:
+  - STATUS.md
+  - BRIEF.md
+  - DECISIONS.md
+  - docs/
+tools:
+  - read_files
+  - search_files
+  - terminal_read_only
+risk_posture:
+  ask_before:
+    - destructive_commands
+    - production_changes
+    - credential_changes
+    - external_messages
+deliver_to: project-channel
+status_artifacts:
+  - STATUS.md
+  - DECISIONS.md

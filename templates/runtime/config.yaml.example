@@ -1,0 +1,17 @@
+runtime:
+  name: RUNTIME_NAME_HERE
+  home: LOCAL_RUNTIME_HOME_HERE
+  workspace: LOCAL_WORKSPACE_DIR_HERE
+
+safety:
+  diagnostics_print_values: false
+  require_human_approval_for:
+    - production_changes
+    - credential_changes
+    - permission_changes
+    - data_deletion
+    - spending
+    - external_messages
+
+profiles:
+  directory: templates/profiles
