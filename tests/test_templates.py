@@ -72,6 +72,7 @@ class TemplateTests(unittest.TestCase):
 
     def test_smoke_playbook_requires_planned_restart_hardening_evidence(self):
         text = (ROOT / "docs" / "smoke-test-playbook.md").read_text(encoding="utf-8")
+        changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
         for required in [
             "operator-approved detached service control",
             "durable comeback notification markers",
@@ -79,6 +80,7 @@ class TemplateTests(unittest.TestCase):
             "SIGKILL",
         ]:
             self.assertIn(required, text)
+            self.assertIn(required, changelog)
 
 
 if __name__ == "__main__":
