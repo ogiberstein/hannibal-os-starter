@@ -25,7 +25,7 @@ auth/config success is not enough for live-ready status. For each enabled messag
 - recent successful send from the managed gateway/runtime to an approved test route;
 - recent inbound message or command reaching the intended project/default profile;
 - scheduled update delivery to the intended target, followed by cleanup/removal of the test job;
-- restart/recovery proof that the same route still works after the gateway/service restarts.
+- restart/recovery proof that the same route still works after the gateway/service restarts; planned restarts must use operator-approved detached service control, durable comeback notification markers, and journal evidence with no `TimeoutStopSec`/`SIGKILL`.
 
 Use route labels instead of raw IDs. Do not paste transcripts, tokens, private logs, or customer-private message content.
 
