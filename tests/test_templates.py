@@ -59,6 +59,17 @@ class TemplateTests(unittest.TestCase):
             self.assertTrue(targets)
             self.assertFalse(any(target.exists() for target in targets))
 
+    def test_smoke_playbook_requires_transport_health_evidence(self):
+        text = (ROOT / "docs" / "smoke-test-playbook.md").read_text(encoding="utf-8")
+        for required in [
+            "Transport-health evidence",
+            "auth/config success is not enough",
+            "recent successful send",
+            "recent inbound",
+            "scheduled update delivery",
+        ]:
+            self.assertIn(required, text)
+
 
 if __name__ == "__main__":
     unittest.main()

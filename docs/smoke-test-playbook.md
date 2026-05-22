@@ -18,6 +18,17 @@ Restart the gateway or runtime service. Verify routes and local config are still
 
 Create a one-shot scheduled update to a test target. Verify it delivers once, then remove or disable it.
 
+## 5. Transport-health evidence
+
+auth/config success is not enough for live-ready status. For each enabled messaging surface, record sanitized evidence of:
+
+- recent successful send from the managed gateway/runtime to an approved test route;
+- recent inbound message or command reaching the intended project/default profile;
+- scheduled update delivery to the intended target, followed by cleanup/removal of the test job;
+- restart/recovery proof that the same route still works after the gateway/service restarts.
+
+Use route labels instead of raw IDs. Do not paste transcripts, tokens, private logs, or customer-private message content.
+
 ## Evidence rule
 
 Record evidence in the private deployment repo or local ops notes. Redact raw IDs, message contents, secrets, logs, and transcripts before sharing.

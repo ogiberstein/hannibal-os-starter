@@ -36,7 +36,7 @@ Do **not** use this if you want a hosted SaaS, a managed deployment, a complianc
 - Messaging-route pattern for mapping channels to profiles.
 - First-deployment checklist.
 - Runtime preflight checklist.
-- Smoke-test playbook for routing, default/CoS, recovery, and scheduled updates.
+- Smoke-test playbook for routing, default/CoS, recovery, scheduled updates, and transport-health evidence.
 - Backup/restore, support-boundary, and transparent-learning docs.
 - Sanitation and verification scripts to keep the public repo safe.
 
