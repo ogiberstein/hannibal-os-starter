@@ -38,6 +38,7 @@ Do **not** use this if you want a hosted SaaS, a managed deployment, a complianc
 - Runtime preflight checklist.
 - Smoke-test playbook for routing, default/CoS, recovery, scheduled updates, and transport-health evidence.
 - Backup/restore, support-boundary, and transparent-learning docs.
+- Optional public command and skill examples under `skills/hannibal-public/` and `commands/examples/`.
 - Sanitation and verification scripts to keep the public repo safe.
 
 ## How this relates to Hermes
@@ -163,6 +164,15 @@ Do not source `.env` as shell code just to inspect it. Do not print secret value
 Start Hermes using the command recommended by your Hermes install/runtime. Keep the runtime home and workspace pointed at your private deployment, not this public starter checkout.
 
 This repo intentionally does not hard-code a Hermes start command because runtime packaging and gateway adapters can change. The invariant is stable: Hermes owns execution; this starter owns the operating scaffold around it.
+
+### Optional public command and skill examples
+
+This starter includes optional public command and skill examples:
+
+- `skills/hannibal-public/` — public-safe agent skills for handover bootstrap, status refresh, and evidence gating.
+- `commands/examples/` — prompt-macro examples that reference those skills.
+
+These examples are deliberately generic. This starter does not automatically install these into Hermes, prove a private runtime is live, or replace deployment review. Copy or adapt them only inside your private deployment after review.
 
 ### 8. Smoke test the four required loops
 
