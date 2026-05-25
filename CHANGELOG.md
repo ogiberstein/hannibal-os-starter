@@ -6,7 +6,7 @@ Public-safe changes to Hannibal OS Starter. Do not include private deployment st
 
 - Shipped: Added public command and skill examples for `handover-bootstrap`, `status-refresh`, and `evidence-gate`.
 - Public-facing value: Operators get copyable, public-safe prompts and skill procedures for creating project handover packets, refreshing evidence-backed status, and making go/no-go claim ledgers without leaking private runtime state.
-- Verification: `python3 -m unittest tests.test_public_command_skill_pack -v`; `python3 scripts/verify_repo.py --path .`.
+- Verification: `python3 -m unittest tests.test_public_command_skill_pack -v`; `python3 scripts/verify_repo.py --path .`; targeted public-pack private-marker/raw-ID scan; GitHub Actions CI on commit `8126434`.
 - Follow-up: These examples are not auto-installed into Hermes; each private deployment should review and adapt them before adding local command shortcuts.
 
 ## 2026-05-22 — Planned restart hardening evidence
