@@ -70,6 +70,34 @@ class TemplateTests(unittest.TestCase):
         ]:
             self.assertIn(required, text)
 
+    def test_runtime_preflight_documents_workload_isolation_contract(self):
+        preflight = (ROOT / "docs" / "runtime-preflight.md").read_text(encoding="utf-8")
+        env = (ROOT / "templates/runtime/env.example").read_text(encoding="utf-8")
+        changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        for required in [
+            "HERMES_GATEWAY_SESSION=1",
+            "HERMES_TERMINAL_SYSTEMD_ISOLATION=1",
+            "HERMES_TERMINAL_MEMORY_HIGH",
+            "HERMES_LSP_MEMORY_HIGH",
+            "_gateway_systemd_isolation_enabled",
+            "_systemd_run_command",
+            "systemd_unit",
+            "LSP transient-unit support",
+            "hermes-terminal-*",
+            "hermes-terminal-pty-*",
+            "hermes-lsp-*",
+            "compatibility gate does not prove live cgroup isolation",
+        ]:
+            self.assertIn(required, preflight)
+        for required in [
+            "HERMES_GATEWAY_SESSION=1",
+            "HERMES_TERMINAL_SYSTEMD_ISOLATION=1",
+            "HERMES_TERMINAL_MEMORY_MAX",
+            "HERMES_LSP_MEMORY_MAX",
+        ]:
+            self.assertIn(required, env)
+        self.assertIn("Runtime workload isolation contract", changelog)
+
     def test_smoke_playbook_requires_planned_restart_hardening_evidence(self):
         text = (ROOT / "docs" / "smoke-test-playbook.md").read_text(encoding="utf-8")
         changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
