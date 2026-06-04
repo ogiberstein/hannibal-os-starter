@@ -14,6 +14,7 @@ A preflight should answer: "Is this instance configured enough to smoke test?" I
 - A pinned runtime ref is set (`HERMES_REF`/`RUNTIME_REF` equivalent); preflight should report only presence, not the literal value.
 - For Hermes-compatible managed gateways, `HERMES_GATEWAY_SESSION=1`, `HERMES_TERMINAL_SYSTEMD_ISOLATION=1`, bounded terminal memory env vars (`HERMES_TERMINAL_MEMORY_HIGH`, `HERMES_TERMINAL_MEMORY_MAX`, `HERMES_TERMINAL_MEMORY_SWAP_MAX`), and bounded LSP memory env vars (`HERMES_LSP_MEMORY_HIGH`, `HERMES_LSP_MEMORY_MAX`, `HERMES_LSP_MEMORY_SWAP_MAX`) are present.
 - Runtime compatibility symbols are present when the checkout is available: `_gateway_systemd_isolation_enabled`, `_systemd_run_command`, process-registry `systemd_unit` support, and LSP transient-unit support.
+- Latest CTO-audit compatibility signals are present when the checkout is available: cwd-preserving `--working-directory`, `systemctl show` recovery using `ActiveState` / `SubState` / `MainPID`, Hermes env temp-file cleanup (`hermes-terminal-env-*`), and best-effort transient-unit cleanup.
 
 ## Do not
 

@@ -4,7 +4,7 @@ Public-safe changes to Hannibal OS Starter. Do not include private deployment st
 
 ## 2026-06-03 — Runtime workload isolation contract
 
-- Shipped: Added public-safe runtime preflight guidance and env placeholders for Hermes-compatible workload isolation.
+- Shipped: Added public-safe runtime preflight guidance and env placeholders for Hermes-compatible workload isolation, plus CTO-audit compatibility signals for cwd preservation, unit-state recovery, env temp-file cleanup, and best-effort transient-unit cleanup.
 - Public-facing value: Operators are told that a messaging gateway must not share a cgroup with memory-heavy foreground terminal, PTY/background coding, or LSP subprocesses; presence/symbol checks are compatibility gates only.
 - Verification: `python3 scripts/verify_repo.py --path .` and GitHub Actions CI after this commit.
 - Follow-up: Managed deployments still need live cgroup smoke evidence showing `hermes-terminal-*`, `hermes-terminal-pty-*`, and `hermes-lsp-*` transient units before claiming live isolation.
