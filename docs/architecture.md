@@ -1,36 +1,39 @@
 # Architecture
 
-Hannibal OS Starter separates three concerns:
+## V2 boundary
+
+Hannibal OS Starter is a thin reference layer around upstream Hermes.
 
 ```text
-Agent runtime
-  Tools, model calls, gateway adapters, schedules, memory, sessions, and execution.
+Upstream Hermes
+  Runtime, models, tools, memory, sessions, skills, cron, native profiles,
+  profile routing, messaging gateways, configuration, and lifecycle commands.
 
-Starter repository
-  Templates, docs, public-safe examples, checklists, and verification scripts.
+Thin Hannibal layer
+  Role contracts, operator judgment, project-control docs, public-safe examples,
+  sanitation, and simple verification guidance.
 
-Private instance
-  Local credentials, live config, channel IDs, memory, sessions, logs, backups, and evidence.
+Private operator state
+  Credentials, route IDs, memories, sessions, logs, runtime databases,
+  operational evidence, customer data, and recovery material.
 ```
 
-The starter should remain generic. A private instance can adapt it to a specific runtime, workspace, and messaging surface.
+The public starter must not become another runtime, router, deployment system, recovery platform, or copy of a private control plane.
 
 ## Design principles
 
-- Single-tenant first.
-- Explicit project/profile boundaries.
-- Local ownership of secrets and live state.
-- Presence-only diagnostics.
-- Boring recovery and rollback docs before live use.
-- Improvement propagation that separates reusable lessons from private instance state.
+- **Upstream first:** adopt supported Hermes capabilities before adding local machinery.
+- **Native boundaries:** use Hermes profiles for independent state and native `gateway.profile_routes` for supported routing.
+- **State outside source:** keep durable/private state separate from replaceable runtime code.
+- **Operator-led change:** supervise updates and restarts; make failure observable; keep rollback cheap.
+- **Proportionate recovery:** prefer a documented previous-good runtime and ordinary host backup over custom promotion/recovery infrastructure.
+- **Explicit limits:** profiles isolate Hermes state but do not sandbox host filesystem access.
+- **Public sanitation:** publish role patterns and control docs, never live identifiers or operational state.
 
-## Profile loop
+## Current role model
 
-A useful agent profile usually declares:
+- `chief_of_staff`: persistent operator/DM front door and operating-system steward.
+- `default`: unmatched fallback and general project operator.
+- project profiles: optional bounded lanes for explicit projects or responsibilities.
 
-1. role and operating stance
-2. source/context boundaries
-3. allowed tools and risk posture
-4. delivery surface
-5. status/decision artifacts it maintains
-6. escalation conditions for human approval
+Routing chooses context. It does not expand authority: credentials, services, routes, production, destructive actions, customer data, and funds remain approval-gated.

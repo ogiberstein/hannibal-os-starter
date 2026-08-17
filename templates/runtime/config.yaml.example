@@ -1,17 +1,17 @@
-runtime:
-  name: hermes
-  home: LOCAL_RUNTIME_HOME_HERE
-  workspace: LOCAL_WORKSPACE_DIR_HERE
+# Native Hermes config FRAGMENT verified against release v2026.8.3.
+# Merge into the default profile's existing config.yaml; do not replace it wholesale.
+# Re-check the official Hermes docs before use because configuration changes.
+# Replace IDs only in private local state. Never commit live IDs here.
 
-safety:
-  diagnostics_print_values: false
-  require_human_approval_for:
-    - production_changes
-    - credential_changes
-    - permission_changes
-    - data_deletion
-    - spending
-    - external_messages
+gateway:
+  multiplex_profiles: true
+  profile_routes:
+    - name: operator-dm
+      platform: PLATFORM_NAME_HERE
+      chat_id: CHAT_ID_HERE
+      profile: chief_of_staff
 
-profiles:
-  directory: profiles
+    - name: bounded-project-lane
+      platform: PLATFORM_NAME_HERE
+      chat_id: PROJECT_CHAT_ID_HERE
+      profile: project_agent

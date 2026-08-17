@@ -1,34 +1,42 @@
 # Smoke Test Playbook
 
-Run these before live-ready claims.
+Run only on a private test surface and only after the operator approves any required route or gateway change.
 
-## 1. Project channel route
+## 1. Chief-of-Staff DM
 
-Send a harmless test message in the project channel. Verify the intended project profile responds and records the correct context boundary.
+Send a harmless message in the operator DM. Verify the active profile is `chief_of_staff`, the response uses the intended role contract, and no prior unrelated project session was inherited.
 
-## 2. Default / Chief-of-Staff route
+## 2. Bounded project lane
 
-Send a harmless default-route message. Verify it reaches the default or Chief-of-Staff profile, not a project-specific profile.
+Send a harmless message in one explicitly routed project lane. Verify the intended project profile receives it and uses the correct project/control docs.
 
-## 3. Restart / recovery
+## 3. Unmatched fallback
 
-Restart the gateway or runtime service. Verify routes and local config are still loaded and no secrets are printed in logs or diagnostics.
+Send a harmless message from an unconfigured test lane and verify it remains on `default`. Do not intentionally break a live route merely for this check. Confirm all explicit targets exist, then record the behavior documented for the exact installed Hermes version: `v2026.8.3` warns and falls back to default for a missing target, while inspected upstream `main` rejects ingress for a missing or disallowed target.
 
-## 4. Scheduled update
+## 4. Observability
 
-Create a one-shot scheduled update to a test target. Verify it delivers once, then remove or disable it.
+Record sanitized evidence of:
 
-## 5. Transport-health evidence
+- active Hermes release/commit or version;
+- intended profile name for each test lane;
+- recent inbound and outbound success;
+- gateway status and bounded error evidence;
+- no duplicate credential/profile-adapter conflict.
 
-auth/config success is not enough for live-ready status. For each enabled messaging surface, record sanitized evidence of:
+Use route labels, booleans, timestamps, and redacted summaries. Do not paste raw IDs, message contents, credentials, sessions, memories, or private logs.
 
-- recent successful send from the managed gateway/runtime to an approved test route;
-- recent inbound message or command reaching the intended project/default profile;
-- scheduled update delivery to the intended target, followed by cleanup/removal of the test job;
-- restart/recovery proof that the same route still works after the gateway/service restarts; planned restarts must use operator-approved detached service control, durable comeback notification markers, and journal evidence with no `TimeoutStopSec`/`SIGKILL`.
+## 5. Supervised restart/update — optional and separately approved
 
-Use route labels instead of raw IDs. Do not paste transcripts, tokens, private logs, or customer-private message content.
+If the setup will rely on a long-running gateway, prove one supported Hermes restart or update journey only after approval:
+
+- capture the current runtime/version and rollback target;
+- use the lifecycle command documented for the installed Hermes version;
+- verify gateway health and the three routing cases again;
+- roll back if the operator journey fails.
+
+Do not build a custom restart supervisor or recovery platform for this starter.
 
 ## Evidence rule
 
-Record evidence in the private deployment repo or local ops notes. Redact raw IDs, message contents, secrets, logs, and transcripts before sharing.
+Repo tests and config parsing do not prove live routing. Record live evidence privately and sanitize it before sharing. If the live boundary was not exercised, say **not runtime-tested**.

@@ -1,71 +1,78 @@
 # Hannibal OS Starter
 
-Set up a private, single-tenant Hermes agent workspace with reusable profiles, channel routing, project memory docs, safety boundaries, and deployment checklists.
+> **Status — paused reference:** Commercial and product work on Hannibal OS is paused. This repository remains a public reference starter. It is not an actively supported hosted product, managed service, deployment platform, or promise of future maintenance.
 
-Hannibal OS Starter is the public-safe scaffold around a Hermes-style runtime. Hermes runs the agents. This repo helps you turn that runtime into an operating layer for a founder/operator or small team: Chief-of-Staff and project-agent profiles, explicit context files, messaging routes, preflight checks, smoke tests, and backup/recovery playbooks.
+Hannibal OS Starter is a thin, public-safe operating layer for [Hermes Agent](https://github.com/NousResearch/hermes-agent). Upstream Hermes owns runtime execution, models, tools, memory, sessions, skills, cron, profiles, routing, and messaging gateways. This repository adds only reusable role-contract examples, lightweight project-control documents, safety boundaries, and verification checks.
 
-## Why use this?
+It is intentionally **not** a public copy of a private operating system.
 
-Installing an agent runtime is only the beginning. The hard part is making it useful and safe in a real operating context:
+## V2 operating model
 
-- Which project context should the agent trust?
-- Which channel maps to which agent profile?
-- Where do decisions and current status live?
-- What must never go into git?
-- How do you know the gateway, routing, scheduler, and recovery path actually work?
-- How do you improve the setup without leaking private state?
+| Layer | Owns |
+| --- | --- |
+| Upstream Hermes | Installation, updates, configuration, profiles, profile routing, gateway lifecycle, tools, memory, sessions, cron, and native rollback/checkpoint features. |
+| Thin Hannibal layer | Role contracts, operator judgment, `BRIEF.md`, `STATUS.md`, `DECISIONS.md`, `AGENTS.md`, public-safe examples, and sanitation checks. |
+| Private operator state | Credentials, raw route IDs, profile memory, sessions, logs, evidence, customer data, and recovery material. Keep this outside runtime source and outside this public repo. |
 
-This starter gives you the missing operating scaffold so you do not improvise those rules after the first incident.
+V2 principles:
 
-## Who this is for
+- adopt current upstream Hermes instead of maintaining a custom runtime fork;
+- use native Hermes profiles and `gateway.profile_routes` where supported;
+- keep durable/private state separate from replaceable runtime source;
+- prefer supervised updates, observable failure, and a cheap previous-good rollback;
+- accept bounded recoverable downtime instead of building a second deployment or recovery platform;
+- retain strong approval boundaries for credentials, user/customer data, production changes, destructive actions, and funds.
 
-Use this if you are:
+## Chief-of-Staff example
 
-- a technical founder/operator setting up Hermes for yourself or a small team;
-- building project-aware agents for Slack, Discord, Telegram, email, or another messaging surface;
-- creating a private AI Chief-of-Staff / project-agent workspace;
-- looking for a safe public template before building a private deployment.
+The current example is a **persistent operator/DM front door**:
 
-Do **not** use this if you want a hosted SaaS, a managed deployment, a compliance guarantee, or a complete production runtime in this repo.
+- `chief_of_staff` handles the operator's direct-message lane, cross-project judgment, prioritization, escalation, and operating-model coherence;
+- `default` remains the unmatched fallback and can handle general project work;
+- optional project profiles handle explicitly routed, bounded project lanes;
+- broad capability does not grant authority to mutate credentials, routes, services, production, customer data, or funds without approval.
 
-## What you get
+This is an operating contract, not a custom router or orchestration service.
 
-- Chief-of-Staff and project-agent profile templates.
-- Runtime config, `.env`, and profile-router examples.
-- Project memory docs: `BRIEF.md`, `STATUS.md`, `DECISIONS.md`, `AGENTS.md`.
-- Messaging-route pattern for mapping channels to profiles.
-- First-deployment checklist.
-- Runtime preflight checklist.
-- Smoke-test playbook for routing, default/CoS, recovery, scheduled updates, and transport-health evidence.
-- Backup/restore, support-boundary, and transparent-learning docs.
-- Optional public command and skill examples under `skills/hannibal-public/` and `commands/examples/`.
-- Sanitation and verification scripts to keep the public repo safe.
+## What remains useful here
 
-## How this relates to Hermes
+- project-control templates under `templates/project/`;
+- a native Hermes routing **config fragment** under `templates/runtime/config.yaml.example`;
+- public-safe command/skill examples under `commands/examples/` and `skills/hannibal-public/`;
+- lightweight architecture, profile, preflight, smoke-test, recovery, and security notes;
+- sanitation and verification scripts.
 
-| Layer | What it owns | Example |
-| --- | --- | --- |
-| Hermes runtime | agent execution, tools, models, memory, scheduler, gateway adapters | Hermes checkout/package and runtime home |
-| Hannibal OS Starter | public-safe templates, operating docs, safety checks, smoke tests | this repo |
-| Private deployment | real `.env`, channel IDs, local config, project docs, runtime state | your private instance directory/repo |
+Obsolete V1 custom profile YAML, standalone router YAML, managed-deployment environment flags, cgroup-symbol gates, and bespoke restart/recovery guidance have been removed. Historical changelog and review records are evidence only, not current instructions.
 
-This repo does **not** install or replace Hermes. Install/run Hermes separately, then use this starter to create the config/profile/project layer around it.
+## Compatibility truth
 
-## Start here: “I want to set up Hermes”
+This refresh was checked on **2026-08-11** against:
 
-The safe path is: public starter repo → separate private deployment workspace → Hermes runtime → preflight → smoke tests.
+- latest published Hermes release **`v2026.8.3`**, whose annotated tag resolves to commit **`3c27eb6234bf91b8ceee9e9071591b31e9b148cb`**;
+- upstream `main` commit **`f51aa6a9b5ce514e15f8e337777f522fd5cc6fa2`** for current documentation/source drift.
 
-### 0. Prerequisites
+At the released commit, source and docs contain native profile creation, profile-local state, gateway multiplexing, and `gateway.profile_routes` with `platform`, optional `guild_id` / `chat_id` / `thread_id`, and `profile`. Unmatched traffic stays on the default/active profile. **Version difference:** `v2026.8.3` warns and falls back to the default home if an explicit route names a missing profile; inspected upstream `main` adds `gateway.multiplex_profile_allowlist` and rejects ingress when the matched profile is missing or disallowed. The included fragment uses the common subset and requires operators to verify every route target before reliance.
 
-You need:
+Compatibility verification in this repository was **documentation/source inspection plus repository tests only**. No live Hermes profile, route, credential, gateway, service, or runtime was changed or exercised by this pass.
 
-- Python 3.
-- Git.
-- A Hermes runtime checkout/package or another compatible agent runtime.
-- A model-provider key or router key stored locally, not in git.
-- Optional: a Slack/Discord/Telegram/email bot or app for messaging access.
+Hermes changes quickly. Treat commands and config below as a pinned example, then check the authoritative current docs before use:
 
-### 1. Clone and verify the starter
+- [Installation](https://hermes-agent.nousresearch.com/docs/getting-started/installation)
+- [Updating](https://hermes-agent.nousresearch.com/docs/getting-started/updating)
+- [Configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuration)
+- [Profiles](https://hermes-agent.nousresearch.com/docs/user-guide/profiles)
+- [Multiple gateways and profile routing](https://hermes-agent.nousresearch.com/docs/user-guide/multi-profile-gateways)
+- [Messaging gateway](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/)
+
+## Reference setup
+
+These steps describe the shape of a setup. They are not a managed installation runbook.
+
+### 1. Install and configure upstream Hermes
+
+Use the official installation and setup docs rather than copying installer commands from this repository. Confirm the installed version and health with the current Hermes CLI.
+
+### 2. Verify this starter
 
 ```bash
 git clone https://github.com/ogiberstein/hannibal-os-starter.git
@@ -73,161 +80,83 @@ cd hannibal-os-starter
 python3 scripts/verify_repo.py
 ```
 
-This verifies the public starter itself: Python syntax, whitespace, sanitation rules, and tests. It does **not** prove your private Hermes runtime is configured yet.
+This proves only that the public starter is internally consistent and sanitized. It does not prove a private gateway or route works.
 
-### 2. Create a separate private deployment workspace
+### 3. Create native profiles
 
-Do not put live `.env`, channel IDs, sessions, memories, logs, or backups in this public starter checkout.
+Current released Hermes supports native profiles:
 
 ```bash
-mkdir -p ../my-hermes-instance
-cp templates/runtime/env.example ../my-hermes-instance/.env
-cp templates/runtime/config.yaml.example ../my-hermes-instance/config.yaml
-cp templates/runtime/profile_router.yaml.example ../my-hermes-instance/profile_router.yaml
-cp -R templates/project ../my-hermes-instance/project
-mkdir -p ../my-hermes-instance/profiles
-cp templates/profiles/chief_of_staff.yaml.example ../my-hermes-instance/profiles/chief_of_staff.yaml
-cp templates/profiles/project_agent.yaml.example ../my-hermes-instance/profiles/project_agent.yaml
+hermes profile create chief_of_staff --description "Persistent operator front door and cross-project coordinator."
+hermes profile create project_agent --description "Bounded project execution and evidence-backed status."
+hermes profile show chief_of_staff
+hermes profile show project_agent
 ```
 
-Optional: render the project docs with a project/team name:
+Configure each profile through the current Hermes CLI and its own `SOUL.md`, `config.yaml`, and secret store. A profile scopes Hermes state; it is **not** a filesystem sandbox. Set an explicit `terminal.cwd` or use a sandbox backend if that boundary matters.
+
+Do not blindly clone memories, sessions, cron jobs, plugins, credentials, or auth state between roles. Selective inheritance is safer than treating a profile copy as a role design.
+
+### 4. Add native profile routing
+
+`templates/runtime/config.yaml.example` is a fragment to merge into the **default profile's** existing `config.yaml`; it is not a complete replacement config. Replace placeholders only in private state.
+
+The example routes an operator DM to `chief_of_staff`, a bounded project lane to `project_agent`, and leaves unmatched traffic on `default`. Native `profile_routes` require multiplexing to be enabled. The fragment deliberately omits the newer `multiplex_profile_allowlist` key so it remains compatible with the released baseline; operators on newer Hermes may add that key using the current official docs.
+
+After editing, use the current official config and gateway commands to validate and restart through the supported Hermes lifecycle. Do not invent a parallel router service.
+
+### 5. Copy the lightweight control docs
 
 ```bash
+mkdir -p ../my-project-control
+cp -R templates/project/. ../my-project-control/
 python3 scripts/render_project_templates.py \
-  --project "My Team" \
-  --output ../my-hermes-instance/project \
+  --project "My Project" \
+  --output ../my-project-control \
   --force
 ```
 
-If you want to version the private deployment, initialize a **private** repo in `../my-hermes-instance` and keep `.env`, raw route IDs, runtime state, logs, sessions, memories, and backups ignored.
+Use:
 
-### 3. Point the private deployment at Hermes
+- `BRIEF.md` for purpose, scope, and constraints;
+- `STATUS.md` for the current gate, blocker, and next step;
+- `DECISIONS.md` for durable choices and rationale;
+- `AGENTS.md` for agent instructions and approval boundaries.
 
-Edit `../my-hermes-instance/.env` and `config.yaml` locally:
+Keep these durable project truths in a private project/control repository. Keep credentials, raw IDs, memories, sessions, logs, and runtime databases out of it unless a deliberately encrypted private process requires them.
 
-```text
-AGENT_RUNTIME=hermes
-RUNTIME_HOME=LOCAL_RUNTIME_HOME_HERE
-RUNTIME_REF=PINNED_RUNTIME_VERSION_HERE
-WORKSPACE_DIR=LOCAL_WORKSPACE_DIR_HERE
-MODEL_API_KEY=SET_LOCALLY_ONLY
-MESSAGING_BOT_TOKEN=SET_LOCALLY_ONLY
-```
+## Optional public command and skill examples
 
-Use your actual Hermes runtime path/home/workspace values. Keep secrets in local `.env` or a secret manager. Do not paste them into docs, issues, pull requests, chat, or commits.
+`skills/hannibal-public/` and `commands/examples/` contain generic handover, status, and evidence prompts. This repository does not automatically install these into Hermes. Review and adapt them inside private state; they are not runtime extensions or support commitments.
 
-### 4. Configure profiles and routes
+### 6. Verify the operator journey
 
-Edit `../my-hermes-instance/profile_router.yaml`:
+Use `docs/runtime-preflight.md` and `docs/smoke-test-playbook.md`. At minimum, prove from a private test surface that:
 
-```yaml
-routes:
-  - label: chief-of-staff-default
-    platform: PLATFORM_NAME_HERE
-    target: CHANNEL_ID_HERE
-    profile: chief_of_staff
+1. the operator DM reaches `chief_of_staff`;
+2. one explicit project lane reaches its project profile;
+3. unmatched traffic stays on `default`, and every explicit route target exists so the installed version's missing-target behavior cannot misroute work;
+4. status/log evidence is observable without exposing secrets;
+5. a separately approved restart or update has a simple rollback path.
 
-  - label: project-channel
-    platform: PLATFORM_NAME_HERE
-    target: PROJECT_CHANNEL_ID_HERE
-    profile: project_agent
-```
+Do not claim live compatibility from config parsing or repo tests alone.
 
-Replace placeholders only in your private deployment. The router should map each messaging surface to a profile in `../my-hermes-instance/profiles/`.
+## Security and privacy boundaries
 
-### 5. Fill the project memory docs
+Never commit or publish:
 
-Edit the copied files under `../my-hermes-instance/project/`:
+- credentials, tokens, private keys, `.env`, or auth files;
+- raw user, workspace, server, channel, chat, or thread identifiers;
+- profile memories, sessions, transcripts, logs, runtime databases, or backups;
+- customer information, private routes, host details, or operational evidence;
+- private control-plane scripts or machinery.
 
-- `BRIEF.md` — what this workspace is for, users, scope, risks.
-- `STATUS.md` — current phase, gate, next step, blockers.
-- `DECISIONS.md` — durable decisions and why they were made.
-- `AGENTS.md` — operating instructions and boundaries for agents.
+Use obvious placeholders such as `CHAT_ID_HERE`, not realistic fake identifiers. Ask before production, credential, permission, deletion, spending, external-message, route, service, or destructive actions.
 
-These docs are the lightweight memory/control plane for your private workspace.
+## Maturity and support
 
-### 6. Run a private runtime preflight
-
-Use `docs/runtime-preflight.md` as the checklist. A good preflight confirms presence only:
-
-- local `.env` exists;
-- required key names are present;
-- config and profile router exist;
-- Hermes runtime checkout/package exists;
-- placeholders are replaced in private config;
-- diagnostics do not print secret values or raw platform IDs.
-
-Do not source `.env` as shell code just to inspect it. Do not print secret values.
-
-### 7. Start Hermes / gateway
-
-Start Hermes using the command recommended by your Hermes install/runtime. Keep the runtime home and workspace pointed at your private deployment, not this public starter checkout.
-
-This repo intentionally does not hard-code a Hermes start command because runtime packaging and gateway adapters can change. The invariant is stable: Hermes owns execution; this starter owns the operating scaffold around it.
-
-### Optional public command and skill examples
-
-This starter includes optional public command and skill examples:
-
-- `skills/hannibal-public/` — public-safe agent skills for handover bootstrap, status refresh, and evidence gating.
-- `commands/examples/` — prompt-macro examples that reference those skills.
-
-These examples are deliberately generic. This starter does not automatically install these into Hermes, prove a private runtime is live, or replace deployment review. Copy or adapt them only inside your private deployment after review.
-
-### 8. Smoke test the four required loops
-
-Use `docs/smoke-test-playbook.md` and prove:
-
-1. project channel routes to `project_agent`;
-2. default/Chief-of-Staff route reaches `chief_of_staff`;
-3. restart/recovery preserves config and routes;
-4. one scheduled update delivers once to the intended test target.
-
-Record evidence privately. Redact raw IDs, message contents, secrets, logs, transcripts, sessions, and memory files before sharing anything.
-
-### 9. Decide go/no-go
-
-Before relying on the setup:
-
-- complete `docs/first-deployment-checklist.md`;
-- document support boundaries using `docs/support-boundaries.md`;
-- document backup/restore using `docs/backup-restore.md`;
-- decide how improvements flow using `docs/improvement-propagation.md`;
-- keep learning/observability explicit using `docs/transparent-learning.md`.
-
-## Repository layout
-
-```text
-docs/        Architecture, safety boundaries, and operating playbooks.
-templates/   Runtime, profile, and project-doc examples with placeholders only.
-scripts/     Sanitation, verification, and template-rendering helpers.
-tests/       Regression tests for public-safe templates and scans.
-```
-
-## Security defaults
-
-- Keep secrets in local `.env` or a password manager, never in git.
-- Use obvious placeholders such as `CHANNEL_ID_HERE`; avoid fake numeric IDs that look real.
-- Diagnostics should report presence/status only, not values.
-- Ask before production, credential, permission, deletion, spending, or external-message actions.
-- Do not commit transcripts, logs, sessions, memories, backups, customer data, or deployment evidence containing private identifiers.
-
-## What “done” looks like
-
-A private Hermes workspace is ready for real use only when:
-
-- starter verification passes;
-- private runtime preflight passes without printing secrets;
-- profile/router mapping is explicit and tested;
-- four smoke-test loops pass;
-- backup/restore path is documented;
-- support and improvement boundaries are clear;
-- no live secrets, raw IDs, logs, sessions, memories, or backups are committed.
-
-## Maturity
-
-This is a v0 starter/reference kit. Treat it as an operating pattern and checklist, not production infrastructure.
+This is a paused v0 reference kit. It has no hosted offering, support SLA, compatibility promise, automatic synchronization process, or deployment service. Fork or copy only the lightweight pieces you understand, and rely on official Hermes documentation for changing runtime behavior.
 
 ## Contributing
 
-See `CONTRIBUTING.md`. Public contributions must not include private customer data, raw platform IDs, credentials, transcripts, logs, memories, sessions, or backups.
+See `CONTRIBUTING.md`. Public contributions must preserve the sanitation boundary and must not turn this repository into a second runtime, deployment platform, or private-operations mirror.

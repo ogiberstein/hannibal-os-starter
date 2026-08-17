@@ -1,33 +1,27 @@
-# Messaging Surfaces
+# Messaging Surfaces and Native Routing
 
-Messaging surfaces are entry points into profiles: Slack channels, Discord channels, Telegram chats, email aliases, or other adapters supported by your runtime.
+Hermes messaging platforms are the entry points. Hannibal adds role intent, not a parallel router.
 
-## Public-safe routing rule
+Current released Hermes supports `gateway.profile_routes` when `gateway.multiplex_profiles` is enabled. Routes may match `platform` plus optional `guild_id`, `chat_id`, and `thread_id`, then select a native profile. Matching is most-specific-first. Unmatched traffic stays on the default/active profile.
 
-Docs may describe labels, not live IDs.
-
-Good:
+## Public-safe example
 
 ```yaml
-routes:
-  - label: project-channel
-    platform: slack
-    target: CHANNEL_ID_HERE
-    profile: project_agent
+gateway:
+  multiplex_profiles: true
+  profile_routes:
+    - name: operator-dm
+      platform: PLATFORM_NAME_HERE
+      chat_id: CHAT_ID_HERE
+      profile: chief_of_staff
+    - name: bounded-project-lane
+      platform: PLATFORM_NAME_HERE
+      chat_id: PROJECT_CHAT_ID_HERE
+      profile: project_agent
 ```
 
-Bad:
+Merge this into the default profile's existing `config.yaml`; do not replace a working configuration wholesale. Use raw IDs only in private local config. Do not put them in this repo, screenshots, issues, logs, or support messages.
 
-```yaml
-routes:
-  - target: real-live-channel-or-user-id
-```
+The included fragment is the common subset between the verified released and upstream commits. In `v2026.8.3`, a route naming a missing profile logs a warning and falls back to the default home. At inspected upstream `main`, a missing profile—or a profile excluded by the newer `multiplex_profile_allowlist`—causes ingress rejection. Verify the exact installed behavior, ensure every route target exists, and configure any supported allowlist before restart.
 
-## Smoke-test labels
-
-Every private instance should prove:
-
-1. project channel routes to the intended profile
-2. default or Chief-of-Staff route works
-3. restart/recovery preserves routing
-4. one scheduled update delivers to the intended target
+For current syntax and lifecycle commands, use the official [multi-profile gateway documentation](https://hermes-agent.nousresearch.com/docs/user-guide/multi-profile-gateways).

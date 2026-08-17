@@ -68,8 +68,8 @@ class PublicCommandSkillPackTests(unittest.TestCase):
                 self.assertTrue(path.exists(), path)
                 text = path.read_text(encoding="utf-8")
                 self.assertIn(expected, text)
-                self.assertIn("private deployment", text)
-                self.assertNotIn("automatically installs", text.lower())
+                self.assertIn("private", text)
+                self.assertIn("does not automatically install", text.lower())
                 for marker in FORBIDDEN_PUBLIC_PACK_MARKERS:
                     self.assertNotIn(marker, text)
                 self.assertNotRegex(text, r"\b[0-9]{17,20}\b")
@@ -86,13 +86,14 @@ class PublicCommandSkillPackTests(unittest.TestCase):
             "does not automatically install these into Hermes",
         ]:
             self.assertIn(required, readme)
+        lower_changelog = changelog.lower()
         for required in [
             "public command and skill examples",
-            "handover-bootstrap",
-            "status-refresh",
-            "evidence-gate",
+            "handover bootstrap",
+            "status refresh",
+            "evidence gating",
         ]:
-            self.assertIn(required, changelog)
+            self.assertIn(required, lower_changelog)
 
 
 if __name__ == "__main__":

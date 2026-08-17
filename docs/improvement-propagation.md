@@ -1,11 +1,12 @@
-# Improvement Propagation
+# Improvement Boundaries
 
-When a real deployment teaches something new, route it deliberately.
+There is no active Hannibal OS propagation or synchronization programme for this paused repository.
 
-- Secret/live-state issue → fix locally; do not publish private data.
-- Team-specific workflow → keep in private deployment docs.
-- Generic checklist improvement → contribute to this starter.
-- Runtime bug → report upstream with sanitized reproduction.
-- Security issue → disclose privately.
+If a private operator learns something useful:
 
-Before publishing a lesson, remove raw IDs, names, transcripts, logs, sessions, memories, credentials, and customer-sensitive context.
+- keep private state, customer context, and team-specific workflow private;
+- report runtime defects to upstream Hermes with a sanitized reproduction;
+- disclose security issues privately;
+- publish a generic lesson only after deliberate review and sanitation.
+
+Never copy raw identifiers, names, transcripts, logs, sessions, memories, credentials, host details, operational evidence, customer information, or private control-plane machinery into this repository.

@@ -5,45 +5,71 @@ from pathlib import Path
 from scripts.render_project_templates import render_files
 
 ROOT = Path(__file__).resolve().parents[1]
-REQUIRED_RISK_GATES = {
-    "production_changes",
-    "credential_changes",
-    "permission_changes",
-    "data_deletion",
-    "spending",
-    "external_messages",
-}
+RELEASE_TAG = "v2026.8.3"
+RELEASE_COMMIT = "3c27eb6234bf91b8ceee9e9071591b31e9b148cb"
+MAIN_COMMIT = "f51aa6a9b5ce514e15f8e337777f522fd5cc6fa2"
 
 
 class TemplateTests(unittest.TestCase):
-    def test_runtime_templates_use_placeholders(self):
-        router = (ROOT / "templates/runtime/profile_router.yaml.example").read_text(encoding="utf-8")
-        self.assertIn("CHANNEL_ID_HERE", router)
-        self.assertIn("profile: project_agent", router)
-        self.assertNotRegex(router, r"\b[0-9]{17,20}\b")
+    def test_native_routing_fragment_uses_placeholders(self):
+        config = (ROOT / "templates/runtime/config.yaml.example").read_text(encoding="utf-8")
+        for required in [
+            "gateway:",
+            "multiplex_profiles: true",
+            "profile_routes:",
+            "chat_id: CHAT_ID_HERE",
+            "profile: chief_of_staff",
+            "profile: project_agent",
+        ]:
+            self.assertIn(required, config)
+        self.assertNotIn("multiplex_profile_allowlist", config)
+        self.assertNotRegex(config, r"\b[0-9]{17,20}\b")
+
+    def test_obsolete_v1_runtime_templates_are_absent(self):
+        for relative in [
+            "templates/runtime/env.example",
+            "templates/runtime/profile_router.yaml.example",
+            "templates/profiles/chief_of_staff.yaml.example",
+            "templates/profiles/project_agent.yaml.example",
+        ]:
+            self.assertFalse((ROOT / relative).exists(), relative)
 
     def test_project_templates_exist(self):
         for name in ["AGENTS.md", "BRIEF.md", "STATUS.md", "DECISIONS.md"]:
             self.assertTrue((ROOT / "templates/project" / name).exists())
 
-    def test_readme_has_marketing_and_hermes_setup_path(self):
+    def test_readme_states_pause_v2_and_exact_compatibility(self):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("Why use this?", readme)
-        self.assertIn("Start here: “I want to set up Hermes”", readme)
-        self.assertIn("https://github.com/ogiberstein/hannibal-os-starter.git", readme)
-        self.assertIn("separate private deployment workspace", readme)
-        self.assertIn("not production infrastructure", readme)
+        self.assertIn("commercial and product work on hannibal os is paused", readme.lower())
+        for required in [
+            "not an actively supported hosted product",
+            "V2 operating model",
+            "persistent operator/DM front door",
+            "gateway.profile_routes",
+            "v2026.8.3` warns and falls back",
+            RELEASE_TAG,
+            RELEASE_COMMIT,
+            MAIN_COMMIT,
+            "No live Hermes profile, route, credential, gateway, service, or runtime was changed",
+            "https://hermes-agent.nousresearch.com/docs/user-guide/profiles",
+            "https://github.com/ogiberstein/hannibal-os-starter.git",
+        ]:
+            self.assertIn(required, readme)
 
-    def test_profile_risk_gates_match_canonical_set(self):
-        for path in (ROOT / "templates/profiles").glob("*.yaml.example"):
-            text = path.read_text(encoding="utf-8")
-            for gate in REQUIRED_RISK_GATES:
-                self.assertIn(f"- {gate}", text, path.name)
-
-    def test_config_uses_private_profiles_directory(self):
-        config = (ROOT / "templates/runtime/config.yaml.example").read_text(encoding="utf-8")
-        self.assertIn("directory: profiles", config)
-        self.assertNotIn("directory: templates/profiles", config)
+    def test_current_docs_do_not_require_v1_custom_contract(self):
+        current_paths = [ROOT / "README.md", *sorted((ROOT / "docs").glob("*.md"))]
+        forbidden = [
+            "HERMES_GATEWAY_SESSION=1",
+            "HERMES_TERMINAL_SYSTEMD_ISOLATION=1",
+            "_gateway_systemd_isolation_enabled",
+            "_systemd_run_command",
+            "hermes-terminal-pty-*",
+            "durable comeback notification markers",
+            "profile_router.yaml",
+        ]
+        combined = "\n".join(path.read_text(encoding="utf-8") for path in current_paths)
+        for value in forbidden:
+            self.assertNotIn(value, combined)
 
     def test_render_project_templates_refuses_overwrite_without_force(self):
         with tempfile.TemporaryDirectory() as d:
@@ -59,63 +85,16 @@ class TemplateTests(unittest.TestCase):
             self.assertTrue(targets)
             self.assertFalse(any(target.exists() for target in targets))
 
-    def test_smoke_playbook_requires_transport_health_evidence(self):
-        text = (ROOT / "docs" / "smoke-test-playbook.md").read_text(encoding="utf-8")
+    def test_smoke_playbook_covers_current_role_journey_and_truth_limit(self):
+        text = (ROOT / "docs/smoke-test-playbook.md").read_text(encoding="utf-8")
         for required in [
-            "Transport-health evidence",
-            "auth/config success is not enough",
-            "recent successful send",
-            "recent inbound",
-            "scheduled update delivery",
+            "Chief-of-Staff DM",
+            "Bounded project lane",
+            "Unmatched fallback",
+            "version: `v2026.8.3` warns and falls back",
+            "not runtime-tested",
         ]:
             self.assertIn(required, text)
-
-    def test_runtime_preflight_documents_workload_isolation_contract(self):
-        preflight = (ROOT / "docs" / "runtime-preflight.md").read_text(encoding="utf-8")
-        env = (ROOT / "templates/runtime/env.example").read_text(encoding="utf-8")
-        changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-        for required in [
-            "HERMES_GATEWAY_SESSION=1",
-            "HERMES_TERMINAL_SYSTEMD_ISOLATION=1",
-            "HERMES_TERMINAL_MEMORY_HIGH",
-            "HERMES_LSP_MEMORY_HIGH",
-            "_gateway_systemd_isolation_enabled",
-            "_systemd_run_command",
-            "systemd_unit",
-            "LSP transient-unit support",
-            "--working-directory",
-            "systemctl show",
-            "ActiveState",
-            "SubState",
-            "MainPID",
-            "hermes-terminal-env-*",
-            "best-effort transient-unit cleanup",
-            "hermes-terminal-*",
-            "hermes-terminal-pty-*",
-            "hermes-lsp-*",
-            "compatibility gate does not prove live cgroup isolation",
-        ]:
-            self.assertIn(required, preflight)
-        for required in [
-            "HERMES_GATEWAY_SESSION=1",
-            "HERMES_TERMINAL_SYSTEMD_ISOLATION=1",
-            "HERMES_TERMINAL_MEMORY_MAX",
-            "HERMES_LSP_MEMORY_MAX",
-        ]:
-            self.assertIn(required, env)
-        self.assertIn("Runtime workload isolation contract", changelog)
-
-    def test_smoke_playbook_requires_planned_restart_hardening_evidence(self):
-        text = (ROOT / "docs" / "smoke-test-playbook.md").read_text(encoding="utf-8")
-        changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-        for required in [
-            "operator-approved detached service control",
-            "durable comeback notification markers",
-            "TimeoutStopSec",
-            "SIGKILL",
-        ]:
-            self.assertIn(required, text)
-            self.assertIn(required, changelog)
 
 
 if __name__ == "__main__":

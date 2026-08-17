@@ -1,22 +1,20 @@
 # Support Boundaries
 
-Define what each party owns before live use.
+Hannibal OS commercial/product work is paused. This repository is an unsupported public reference starter, not a hosted product or managed service.
 
-## Operator owns
+## Repository provides
 
-- starter repo maintenance
-- generic templates and docs
-- reusable sanitation and verification checks
-- public-safe troubleshooting guidance
+- public-safe role and project-control patterns;
+- one version-marked native Hermes routing fragment;
+- sanitation and repository verification checks;
+- links to authoritative Hermes documentation.
 
-## Private instance owner owns
+## Repository does not provide
 
-- credentials and third-party accounts
-- live channel IDs and routing config
-- workspace-specific project docs
-- local runtime state
-- backup custody
+- installation, hosting, monitoring, support SLA, or compatibility guarantee;
+- credential, account, route, backup, update, or incident ownership;
+- a custom runtime, router, deployment platform, recovery platform, or synchronization service.
 
-## Ask before acting
+Private operators own credentials, third-party accounts, live routing, runtime state, backups, evidence, customer data, and upgrade/recovery decisions.
 
-Require explicit approval for production changes, credential changes, permission changes, data deletion, spending, external messaging, and irreversible operations.
+Require explicit approval for production, credential, permission, route, service, data-deletion, spending, external-message, and other irreversible actions.

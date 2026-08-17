@@ -1,23 +1,37 @@
 # Context and Profiles
 
-A profile is a scoped operating contract for an agent.
+Use native Hermes profiles as independent Hermes homes. Each profile has its own configuration, secrets, role contract, memories, sessions, skills, cron jobs, logs, and state database.
 
-## Suggested profile fields
+A profile is not a filesystem sandbox. On the local terminal backend it normally has the same OS-user access as the process running Hermes. Use an explicit `terminal.cwd`, tool restrictions, or a sandbox backend when stronger boundaries matter.
 
-- `name`: short profile name.
-- `role`: what the agent is responsible for.
-- `sources`: allowed context sources.
-- `tools`: allowed capabilities.
-- `risk_posture`: when to ask before acting.
-- `deliver_to`: human-readable delivery label, not a raw platform ID.
-- `status_artifacts`: files the agent should maintain.
+## Chief-of-Staff model
 
-## Source boundaries
+The recommended example is:
 
-Prefer explicit source lists over broad implicit memory. Treat memory and summaries as navigation, not proof. Runtime logs, repo state, docs, and commands are better evidence than recalled context.
+- `chief_of_staff` is the persistent operator/DM front door for cross-project judgment, prioritization, escalation, retrospectives, and control-doc coherence;
+- `default` handles unmatched traffic and general project work;
+- project profiles receive only explicit bounded routes;
+- project escalation returns to the operator/DM lane rather than creating hidden cross-project authority.
 
-## Example profile types
+Broad tools and end-to-end accountability do not authorize unilateral production, route, service, credential, permission, destructive, customer-data, or funds-impacting changes.
 
-- Chief-of-Staff: cross-project triage, reminders, summaries, status discipline.
-- Project Agent: project-specific execution, docs, evidence, and handoff.
-- Reviewer: adversarial review, readiness checks, leak checks, and go/no-go calls.
+## Role contract
+
+Keep each profile's `SOUL.md` concise and explicit about:
+
+1. role and outcome;
+2. trusted source hierarchy;
+3. project/control documents it maintains;
+4. tool and workspace expectations;
+5. approval boundaries;
+6. escalation and handoff behavior.
+
+Keep durable project truth in `BRIEF.md`, `STATUS.md`, `DECISIONS.md`, and `AGENTS.md`. Treat profile memory and session summaries as navigation, not proof.
+
+## Safe profile creation
+
+Use the current official profile commands. Prefer a fresh profile plus selective configuration over blind copying of memory, sessions, cron, plugins, credentials, or auth state.
+
+Changing `SOUL.md` takes effect cleanly in a new session. Verify the active profile and working directory directly; asking the model to describe them is not isolation proof.
+
+Official source: [Hermes profiles](https://hermes-agent.nousresearch.com/docs/user-guide/profiles).

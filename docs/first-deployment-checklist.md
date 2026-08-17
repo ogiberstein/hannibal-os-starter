@@ -1,14 +1,19 @@
-# First Deployment Checklist
+# Reference Setup Checklist
 
-Use this before treating a private instance as ready.
+Use this before relying on a private Hermes profile/routing setup.
 
-- [ ] Repo created from public-safe templates, not from private runtime state.
-- [ ] Runtime chosen and installed outside this public starter repo.
-- [ ] `.env` exists locally and is ignored by git.
-- [ ] Config and profile router use local-only live IDs.
-- [ ] Project `STATUS.md`, `BRIEF.md`, `DECISIONS.md`, and `AGENTS.md` exist.
-- [ ] Secrets are customer/team-owned or operator-owned by explicit agreement.
-- [ ] Runtime preflight passes without printing secret values.
-- [ ] Smoke tests pass for project channel, default/CoS, restart/recovery, and scheduled update.
-- [ ] Backup/restore path is documented.
-- [ ] Support boundaries and escalation rules are clear.
+- [ ] Current upstream Hermes is installed using the official method.
+- [ ] Exact installed release/commit or version is recorded privately.
+- [ ] Native `chief_of_staff` and any project profiles exist.
+- [ ] Each role has a reviewed `SOUL.md` and explicit approval boundaries.
+- [ ] Required project `BRIEF.md`, `STATUS.md`, `DECISIONS.md`, and `AGENTS.md` exist.
+- [ ] Credentials and raw route IDs exist only in private local state.
+- [ ] The default profile uses native `gateway.profile_routes`; no parallel router is running.
+- [ ] Unmatched traffic remains on `default`.
+- [ ] Read-only preflight passes without exposing values.
+- [ ] Private smoke evidence proves Chief-of-Staff DM, project route, and unmatched fallback behavior.
+- [ ] Gateway failure is observable and one cheap rollback target is known.
+- [ ] Any restart/update test was separately approved and used the installed Hermes version's supported lifecycle.
+- [ ] No custom deployment, hardening, synchronization, or recovery platform was added from this reference.
+
+Passing repository tests alone does not satisfy this checklist.

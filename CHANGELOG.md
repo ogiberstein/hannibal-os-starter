@@ -1,24 +1,27 @@
 # Changelog
 
-Public-safe changes to Hannibal OS Starter. Do not include private deployment state, platform IDs, credentials, logs, transcripts, or customer data.
+Public-safe changes to Hannibal OS Starter. Historical entries describe their time; they are not current operating instructions.
 
-## 2026-06-03 — Runtime workload isolation contract
+## 2026-08-11 — V2 truth alignment and paused-reference status
 
-- Shipped: Added public-safe runtime preflight guidance and env placeholders for Hermes-compatible workload isolation, plus CTO-audit compatibility signals for cwd preservation, unit-state recovery, env temp-file cleanup, and best-effort transient-unit cleanup.
-- Public-facing value: Operators are told that a messaging gateway must not share a cgroup with memory-heavy foreground terminal, PTY/background coding, or LSP subprocesses; presence/symbol checks are compatibility gates only.
-- Verification: `python3 scripts/verify_repo.py --path .` and GitHub Actions CI after this commit.
-- Follow-up: Managed deployments still need live cgroup smoke evidence showing `hermes-terminal-*`, `hermes-terminal-pty-*`, and `hermes-lsp-*` transient units before claiming live isolation.
+- Reframed the starter around current upstream Hermes as the runtime and a thin Hannibal layer for role contracts, project-control docs, native profiles/routing, operator judgment, observability, and cheap rollback.
+- Marked Hannibal OS commercial/product work paused and this repository an unsupported public reference.
+- Replaced the standalone router/custom profile/runtime examples with a native `gateway.profile_routes` fragment verified by source/docs inspection against Hermes `v2026.8.3` / `3c27eb6234bf91b8ceee9e9071591b31e9b148cb` and cross-checked against upstream `main` `f51aa6a9b5ce514e15f8e337777f522fd5cc6fa2`.
+- Removed obsolete managed-deployment flags, V1 cgroup-symbol checks, custom restart-hardening contract, and bespoke recovery-platform guidance.
+- No live Hermes runtime, profile, route, credential, gateway, service, cron, or customer state was changed or runtime-tested.
 
-## 2026-05-23 — Public command and skill examples
+## Historical V1-era entries
 
-- Shipped: Added public command and skill examples for `handover-bootstrap`, `status-refresh`, and `evidence-gate`.
-- Public-facing value: Operators get copyable, public-safe prompts and skill procedures for creating project handover packets, refreshing evidence-backed status, and making go/no-go claim ledgers without leaking private runtime state.
-- Verification: `python3 -m unittest tests.test_public_command_skill_pack -v`; `python3 scripts/verify_repo.py --path .`; targeted public-pack private-marker/raw-ID scan; GitHub Actions CI on commit `8126434`.
-- Follow-up: These examples are not auto-installed into Hermes; each private deployment should review and adapt them before adding local command shortcuts.
+The entries below are retained only as repository history. Their managed-deployment and restart-hardening guidance was superseded by the V2 refresh above.
 
-## 2026-05-22 — Planned restart hardening evidence
+### 2026-06-03 — Runtime workload isolation contract
 
-- Shipped: Updated the smoke-test playbook to require planned restart/recovery evidence before treating a deployment as live-ready.
-- Public-facing value: Operators are now told to use operator-approved detached service control, durable comeback notification markers, and journal evidence with no `TimeoutStopSec` or `SIGKILL` instead of accepting a vague post-restart response check.
-- Verification: `python3 scripts/verify_repo.py`; GitHub Actions CI on commit `b58d863`.
-- Follow-up: Private deployments still need their own approved restart drill; this public starter does not perform or prove a live runtime restart.
+Added public preflight guidance for a then-current custom managed-deployment isolation contract. The flags, symbol checks, and transient-unit requirements were removed from current guidance on 2026-08-11.
+
+### 2026-05-23 — Public command and skill examples
+
+Added public-safe examples for handover bootstrap, status refresh, and evidence gating. They remain optional prompt/skill examples and are not automatically installed.
+
+### 2026-05-22 — Planned restart hardening evidence
+
+Added a custom managed-restart evidence contract. It was removed from current guidance on 2026-08-11 in favor of current upstream Hermes lifecycle documentation, supervised change, observable failure, and simple rollback.
