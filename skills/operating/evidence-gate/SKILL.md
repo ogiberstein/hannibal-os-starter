@@ -1,6 +1,6 @@
 ---
 name: evidence-gate
-description: Produce a public-safe evidence gate for a native Hermes profile/routing setup, separating claims from proof and using PASS/FAIL/INCONCLUSIVE outcomes.
+description: Use when deciding go/no-go on a setup or change and you need claims separated from proof. Produces a public-safe evidence gate with PASS/FAIL/INCONCLUSIVE outcomes, for example for a native Hermes profile and routing setup.
 triggers:
   - evidence gate
   - go no-go evidence

@@ -15,9 +15,13 @@ The recommended example is:
 
 Broad tools and end-to-end accountability do not authorize unilateral production, route, service, credential, permission, destructive, customer-data, or funds-impacting changes.
 
+## Per-channel context without a new profile
+
+Many "roles" only need project context, not separate state. `slack.channel_prompts` injects a short prompt for one channel on every turn. Point it at the project's `STATUS.md` and `BRIEF.md`. Add a profile only when a role needs its own memory, sessions, tools or approval boundary; see the `agent-role-profile-design` skill.
+
 ## Role contract
 
-Keep each profile's `SOUL.md` concise and explicit about:
+Start from `templates/soul/`. Keep each profile's `SOUL.md` concise and explicit about:
 
 1. role and outcome;
 2. trusted source hierarchy;
@@ -26,7 +30,7 @@ Keep each profile's `SOUL.md` concise and explicit about:
 5. approval boundaries;
 6. escalation and handoff behavior.
 
-Keep durable project truth in `BRIEF.md`, `STATUS.md`, `DECISIONS.md`, and `AGENTS.md`. Treat profile memory and session summaries as navigation, not proof.
+Keep durable project truth in `BRIEF.md`, `STATUS.md`, `ROADMAP.md`, `DECISIONS.md`, and `AGENTS.md`. Treat profile memory and session summaries as navigation, not proof.
 
 ## Safe profile creation
 

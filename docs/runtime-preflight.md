@@ -11,9 +11,9 @@ Use the current official CLI to confirm:
 - required native profiles exist and show the intended profile homes;
 - each profile has an explicit role contract and, where needed, an explicit `terminal.cwd`;
 - the default profile's config contains only intended `gateway.profile_routes`;
-- every routed profile is installed; if the installed Hermes supports a multiplex allowlist, every routed profile is allowed;
+- every routed profile is installed (a route to a missing profile rejects that chat's messages in v0.22.x);
 - gateway status and bounded logs are observable without printing credentials or raw IDs;
-- a previous-good runtime or other cheap rollback target is known before an approved update/restart.
+- a previous-good runtime or other cheap rollback target is known before an approved update/restart (see `docs/runtime-updates.md`).
 
 CLI and config details change. Use the official [configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuration), [profiles](https://hermes-agent.nousresearch.com/docs/user-guide/profiles), [updating](https://hermes-agent.nousresearch.com/docs/getting-started/updating), and [gateway](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/) documentation for exact current commands.
 

@@ -1,6 +1,6 @@
 ---
 name: status-refresh
-description: Refresh a project STATUS.md with evidence-backed current state, gaps, blockers, and a concrete Next step while keeping public/private boundaries intact.
+description: Use when a project STATUS.md needs refreshing after work lands. Writes evidence-backed current state, gaps, blockers, and a concrete Next step while keeping public/private boundaries intact.
 triggers:
   - status refresh
   - refresh status

@@ -5,9 +5,8 @@ from pathlib import Path
 from scripts.render_project_templates import render_files
 
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE_TAG = "v2026.8.3"
-RELEASE_COMMIT = "3c27eb6234bf91b8ceee9e9071591b31e9b148cb"
-MAIN_COMMIT = "f51aa6a9b5ce514e15f8e337777f522fd5cc6fa2"
+CHECKED_SOURCE = "v0.22.2"
+CHECKED_DOCS = "v0.22.5"
 
 
 class TemplateTests(unittest.TestCase):
@@ -20,6 +19,8 @@ class TemplateTests(unittest.TestCase):
             "chat_id: CHAT_ID_HERE",
             "profile: chief_of_staff",
             "profile: project_agent",
+            "channel_prompts:",
+            CHECKED_SOURCE,
         ]:
             self.assertIn(required, config)
         self.assertNotIn("multiplex_profile_allowlist", config)
@@ -35,24 +36,30 @@ class TemplateTests(unittest.TestCase):
             self.assertFalse((ROOT / relative).exists(), relative)
 
     def test_project_templates_exist(self):
-        for name in ["AGENTS.md", "BRIEF.md", "STATUS.md", "DECISIONS.md"]:
+        for name in ["AGENTS.md", "BRIEF.md", "STATUS.md", "ROADMAP.md", "DECISIONS.md"]:
             self.assertTrue((ROOT / "templates/project" / name).exists())
 
-    def test_readme_states_pause_v2_and_exact_compatibility(self):
+    def test_role_contracts_use_placeholder_operator(self):
+        for name in ["chief_of_staff.role.md", "default.role.md"]:
+            text = (ROOT / "templates/soul" / name).read_text(encoding="utf-8")
+            self.assertIn("OPERATOR", text)
+
+    def test_readme_states_scope_loop_and_compatibility(self):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("commercial and product work on hannibal os is paused", readme.lower())
         for required in [
-            "not an actively supported hosted product",
-            "V2 operating model",
-            "persistent operator/DM front door",
+            "This is a reference, not a product.",
+            "### The build loop",
+            "**You approve the spec.**",
+            "**You merge.**",
             "gateway.profile_routes",
-            "v2026.8.3` warns and falls back",
-            RELEASE_TAG,
-            RELEASE_COMMIT,
-            MAIN_COMMIT,
-            "No live Hermes profile, route, credential, gateway, service, or runtime was changed",
+            "slack.channel_prompts",
+            CHECKED_SOURCE,
+            CHECKED_DOCS,
+            "Nothing in this pass changed or exercised a live gateway.",
             "https://hermes-agent.nousresearch.com/docs/user-guide/profiles",
             "https://github.com/ogiberstein/hannibal-os-starter.git",
+            "docs/claude-hermes-build-loop.md",
+            "docs/runtime-updates.md",
         ]:
             self.assertIn(required, readme)
 
@@ -91,7 +98,8 @@ class TemplateTests(unittest.TestCase):
             "Chief-of-Staff DM",
             "Bounded project lane",
             "Unmatched fallback",
-            "version: `v2026.8.3` warns and falls back",
+            "rejects that chat's messages",
+            "One real build slice",
             "not runtime-tested",
         ]:
             self.assertIn(required, text)

@@ -1,6 +1,6 @@
 # Improvement Boundaries
 
-There is no active Hannibal OS propagation or synchronization programme for this paused repository.
+There is no automatic synchronization between this repository and any private setup. Updates are deliberate, reviewed, and sanitized.
 
 If a private operator learns something useful:
 

@@ -2,7 +2,7 @@
 
 Hermes messaging platforms are the entry points. Hannibal adds role intent, not a parallel router.
 
-Current released Hermes supports `gateway.profile_routes` when `gateway.multiplex_profiles` is enabled. Routes may match `platform` plus optional `guild_id`, `chat_id`, and `thread_id`, then select a native profile. Matching is most-specific-first. Unmatched traffic stays on the default/active profile.
+Hermes supports `gateway.profile_routes` when `gateway.multiplex_profiles` is enabled. Routes may match `platform` plus optional `guild_id`, `chat_id`, `thread_id`, and `user_id`, then select a native profile. Matching is most-specific-first. Unmatched traffic stays on the default/active profile.
 
 ## Public-safe example
 
@@ -22,6 +22,8 @@ gateway:
 
 Merge this into the default profile's existing `config.yaml`; do not replace a working configuration wholesale. Use raw IDs only in private local config. Do not put them in this repo, screenshots, issues, logs, or support messages.
 
-The included fragment is the common subset between the verified released and upstream commits. In `v2026.8.3`, a route naming a missing profile logs a warning and falls back to the default home. At inspected upstream `main`, a missing profile—or a profile excluded by the newer `multiplex_profile_allowlist`—causes ingress rejection. Verify the exact installed behavior, ensure every route target exists, and configure any supported allowlist before restart.
+Every route target must exist. In Hermes v0.22.x a route that names a missing profile rejects that chat's messages instead of falling back to `default`. The older `gateway.multiplex_profile_allowlist` key is retired; to stop serving a profile, park it (`hermes -p <name> gateway stop`) or delete it.
+
+For per-channel project context without a separate profile, use `slack.channel_prompts` (see `templates/runtime/config.yaml.example`). Point each prompt at the repo's `STATUS.md` and `BRIEF.md` rather than copying state into config.
 
 For current syntax and lifecycle commands, use the official [multi-profile gateway documentation](https://hermes-agent.nousresearch.com/docs/user-guide/multi-profile-gateways).

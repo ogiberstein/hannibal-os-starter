@@ -1,17 +1,33 @@
-# Native Hermes config FRAGMENT verified against release v2026.8.3.
-# Merge into the default profile's existing config.yaml; do not replace it wholesale.
-# Re-check the official Hermes docs before use because configuration changes.
-# Replace IDs only in private local state. Never commit live IDs here.
+# Native Hermes config FRAGMENT, checked against Hermes v0.22.2 source and the
+# v0.22.5 docs (October 2026). Merge it into the DEFAULT profile's existing
+# config.yaml; do not replace that file. Hermes changes quickly: re-check the
+# official docs before use. Put real IDs only in your private config, never here.
 
 gateway:
+  # Serve every named profile from one gateway process.
   multiplex_profiles: true
+  # Send specific chats to specific profiles. Most specific match wins
+  # (user_id > thread_id > chat_id > guild_id). Unmatched chats stay on default.
+  # Every target profile must exist, or that chat's messages are rejected.
   profile_routes:
     - name: operator-dm
-      platform: PLATFORM_NAME_HERE
+      platform: slack
       chat_id: CHAT_ID_HERE
       profile: chief_of_staff
 
     - name: bounded-project-lane
-      platform: PLATFORM_NAME_HERE
+      platform: slack
       chat_id: PROJECT_CHAT_ID_HERE
       profile: project_agent
+
+slack:
+  # Per-channel context injected on every turn. Often enough on its own: you
+  # may not need a separate profile per project. Point the prompt at the repo's
+  # STATUS.md and BRIEF.md instead of copying state into it. The docs say edits
+  # apply on the next turn; on the versions we ran, the gateway only picked up
+  # this config at start. Plan for one restart and check with a fresh message.
+  channel_prompts:
+    PROJECT_CHAT_ID_HERE: |
+      This channel is the PROJECT_NAME_HERE project. Repo: PROJECT_REPO_PATH_HERE.
+      Read STATUS.md and BRIEF.md there before claiming current state.
+      Approval needed for: deploys, credentials, spend, customer data.

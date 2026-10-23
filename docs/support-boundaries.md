@@ -1,11 +1,13 @@
 # Support Boundaries
 
-Hannibal OS commercial/product work is paused. This repository is an unsupported public reference starter, not a hosted product or managed service.
+This repository is an unsupported public reference starter, not a hosted product or managed service. It is updated when the author's own setup changes in a way worth sharing.
 
 ## Repository provides
 
 - public-safe role and project-control patterns;
 - one version-marked native Hermes routing fragment;
+- a skill pack and installer for Hermes and Claude Code;
+- a reference runtime switcher with tests for its switch and rollback paths;
 - sanitation and repository verification checks;
 - links to authoritative Hermes documentation.
 

@@ -1,8 +1,8 @@
 # Architecture
 
-## V2 boundary
+## Boundary
 
-Hannibal OS Starter is a thin reference layer around upstream Hermes.
+Hannibal OS Starter is a thin reference layer around upstream Hermes. Claude Code and Codex sit beside it on the operator's laptop: Claude specs and orchestrates, Codex reviews, Hermes builds on an always-on server (see `docs/claude-hermes-build-loop.md`).
 
 ```text
 Upstream Hermes
@@ -10,8 +10,8 @@ Upstream Hermes
   profile routing, messaging gateways, configuration, and lifecycle commands.
 
 Thin Hannibal layer
-  Role contracts, operator judgment, project-control docs, public-safe examples,
-  sanitation, and simple verification guidance.
+  Agent rulebook and role contracts, project-control docs, skills, the build
+  loop, a runtime switcher, sanitation, and simple verification guidance.
 
 Private operator state
   Credentials, route IDs, memories, sessions, logs, runtime databases,
@@ -23,10 +23,11 @@ The public starter must not become another runtime, router, deployment system, r
 ## Design principles
 
 - **Upstream first:** adopt supported Hermes capabilities before adding local machinery.
-- **Native boundaries:** use Hermes profiles for independent state and native `gateway.profile_routes` for supported routing.
+- **Native boundaries:** use Hermes profiles for independent state, native `gateway.profile_routes` for routing, and `slack.channel_prompts` for per-channel project context.
+- **MVP by default:** simplicity and speed beat polish; full rigour only for money, secrets, customer data, legal exposure, public products, and irreversible deletion.
 - **State outside source:** keep durable/private state separate from replaceable runtime code.
 - **Operator-led change:** supervise updates and restarts; make failure observable; keep rollback cheap.
-- **Proportionate recovery:** prefer a documented previous-good runtime and ordinary host backup over custom promotion/recovery infrastructure.
+- **Proportionate recovery:** prefer a previous-good runtime kept next to the live one (`docs/runtime-updates.md`) and ordinary host backup over custom promotion/recovery infrastructure.
 - **Explicit limits:** profiles isolate Hermes state but do not sandbox host filesystem access.
 - **Public sanitation:** publish role patterns and control docs, never live identifiers or operational state.
 

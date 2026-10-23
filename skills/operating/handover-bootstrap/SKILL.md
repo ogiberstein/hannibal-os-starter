@@ -1,6 +1,6 @@
 ---
 name: handover-bootstrap
-description: Build a public-safe project control packet for a private native-Hermes workspace without exposing secrets, raw platform IDs, logs, sessions, memories, or customer data.
+description: Use when handing a project to a new agent, session, or person. Builds a public-safe project control packet for a private Hermes workspace without exposing secrets, raw platform IDs, logs, sessions, memories, or customer data.
 triggers:
   - handover bootstrap
   - bootstrap handover
