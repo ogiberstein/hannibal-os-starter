@@ -1,6 +1,6 @@
 # The Claude–Hermes build loop
 
-**Version:** public edition, October 2026
+**Version:** public edition of private guide v32 (dated 2 October 2026), published 23 October 2026. Rules marked as observed defaults reflect that date; check them against your current Hermes release.
 
 This guide is for a Claude Code session that dispatches, monitors, or
 verifies a build run by Hermes Agent. Four roles take part:
