@@ -6,7 +6,7 @@ Use this before relying on a private Hermes profile/routing setup.
 - [ ] Exact installed release/commit or version is recorded privately.
 - [ ] Native `chief_of_staff` and any domain profiles (such as `cio`) exist.
 - [ ] Each role has a reviewed `SOUL.md` and explicit approval boundaries.
-- [ ] Required project `AGENTS.md`, `BRIEF.md`, `STATUS.md`, `ROADMAP.md`, and `DECISIONS.md` exist.
+- [ ] Each project repo has `AGENTS.md`, `BRIEF.md`, `STATUS.md`, `ROADMAP.md`, and `DECISIONS.md`, copied from [agent-trainer-harness](https://github.com/ogiberstein/agent-trainer-harness).
 - [ ] The skills each profile needs are installed (`scripts/install_skills.sh`).
 - [ ] Credentials and raw route IDs exist only in private local state.
 - [ ] The default profile uses native `gateway.profile_routes`; no parallel router is running.

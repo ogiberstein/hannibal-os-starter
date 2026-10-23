@@ -4,7 +4,11 @@ Use separate repositories or directories for separate responsibilities.
 
 ## Public starter
 
-Owns generic templates, docs, checklists, and sanitation scripts. It must not contain live runtime state.
+Owns the agent operating-system layer: rulebook and role templates, routing fragment, skills, docs, checklists, and sanitation scripts. It must not contain live runtime state.
+
+## Project harness
+
+[agent-trainer-harness](https://github.com/ogiberstein/agent-trainer-harness) owns the five project files (`AGENTS.md`, `BRIEF.md`, `STATUS.md`, `ROADMAP.md`, `DECISIONS.md`) that go into every project repo. This starter does not keep its own copy.
 
 ## Private deployment repo
 

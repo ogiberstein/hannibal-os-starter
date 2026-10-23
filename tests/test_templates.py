@@ -1,8 +1,5 @@
-import tempfile
 import unittest
 from pathlib import Path
-
-from scripts.render_project_templates import render_files
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKED_SOURCE = "v0.22.2"
@@ -35,9 +32,16 @@ class TemplateTests(unittest.TestCase):
         ]:
             self.assertFalse((ROOT / relative).exists(), relative)
 
-    def test_project_templates_exist(self):
-        for name in ["AGENTS.md", "BRIEF.md", "STATUS.md", "ROADMAP.md", "DECISIONS.md"]:
-            self.assertTrue((ROOT / "templates/project" / name).exists())
+    def test_project_files_come_from_the_harness_only(self):
+        self.assertFalse((ROOT / "templates/project").exists())
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for required in [
+            "https://github.com/ogiberstein/agent-trainer-harness",
+            "lite/new-project/",
+            "### Three repos, three jobs",
+            "https://github.com/ogiberstein/claude-thinking-skills",
+        ]:
+            self.assertIn(required, readme)
 
     def test_role_contracts_use_placeholder_operator(self):
         for name in ["chief_of_staff.role.md", "default.role.md", "cio.role.md", "SOUL.md"]:
@@ -78,20 +82,6 @@ class TemplateTests(unittest.TestCase):
         combined = "\n".join(path.read_text(encoding="utf-8") for path in current_paths)
         for value in forbidden:
             self.assertNotIn(value, combined)
-
-    def test_render_project_templates_refuses_overwrite_without_force(self):
-        with tempfile.TemporaryDirectory() as d:
-            output = Path(d)
-            (output / "STATUS.md").write_text("existing\n", encoding="utf-8")
-            with self.assertRaises(FileExistsError):
-                render_files(output, "My Team", dry_run=False, force=False)
-
-    def test_render_project_templates_dry_run_does_not_write(self):
-        with tempfile.TemporaryDirectory() as d:
-            output = Path(d)
-            targets = render_files(output, "My Team", dry_run=True, force=False)
-            self.assertTrue(targets)
-            self.assertFalse(any(target.exists() for target in targets))
 
     def test_smoke_playbook_covers_current_role_journey_and_truth_limit(self):
         text = (ROOT / "docs/smoke-test-playbook.md").read_text(encoding="utf-8")

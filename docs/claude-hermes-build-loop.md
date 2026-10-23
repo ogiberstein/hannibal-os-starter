@@ -320,7 +320,8 @@ A green branch tip does not prove a green merged tree.
 ## 8. Per-project parameter block
 
 This guide is portable. Each repo states its own facts in its harness
-(`AGENTS.md`, `STATUS.md`, `DECISIONS.md`, runbooks). Read them before
+(`AGENTS.md`, `STATUS.md`, `DECISIONS.md`, runbooks; templates in
+[agent-trainer-harness](https://github.com/ogiberstein/agent-trainer-harness)). Read them before
 dispatch. A minimal block:
 
 ```markdown

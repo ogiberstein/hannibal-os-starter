@@ -4,6 +4,8 @@ Public-safe changes to Hannibal OS Starter. Historical entries describe their ti
 
 ## 2026-10-23 — Build loop, skills, and Hermes v0.22
 
+- Later the same day: removed `templates/project/` and `scripts/render_project_templates.py`. The five project files now come only from [agent-trainer-harness](https://github.com/ogiberstein/agent-trainer-harness); the README names the three repos and what each is for.
+
 - Added the Claude Code / Codex / Hermes build loop: README overview and the full orchestrator playbook in `docs/claude-hermes-build-loop.md`.
 - Added 12 skills (`spec-interview`, `writing-plans`, `overengineering-defence`, `implementation-plan-adversarial-review`, `hermes-build-operations`, `audit-router`, `agent-role-profile-design`, `true-stuck-check-reporting`, `workstream-kill-and-archive-docs`, `plain-style`, `anti-slop-agent-guardrails`, `user-interview-operator`). Moved the three earlier skills (handover bootstrap, status refresh, evidence gating) into `skills/operating/`. All 15 are grouped as build, operating and communication.
 - Added `scripts/install_skills.sh` for Hermes (category layout) and Claude Code (flat layout), with no-clobber by default.

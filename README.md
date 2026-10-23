@@ -46,7 +46,7 @@ The full orchestrator playbook (dispatching over Slack, monitoring a run, clean-
 
 ### Written down, not remembered
 
-Every project repo carries the same control files. The agents read them before they act and keep them current:
+Every project repo carries the same five control files. The agents read them before they act and keep them current:
 
 | File | Holds |
 | --- | --- |
@@ -56,13 +56,20 @@ Every project repo carries the same control files. The agents read them before t
 | `ROADMAP.md` | Where we are going, in order. |
 | `DECISIONS.md` | Why we chose this. |
 
-Templates are in `templates/project/`.
+Take them from [agent-trainer-harness](https://github.com/ogiberstein/agent-trainer-harness), not from this repo. Its `lite/new-project/` folder has all five; `full/` adds roles, handoffs and gates for bigger builds.
+
+### Three repos, three jobs
+
+| Repo | Use it for |
+| --- | --- |
+| **hannibal-os-starter** (this one) | The agent operating system: rulebook, profiles and routing, the build loop, skills, safe Hermes updates. Set up once per machine. |
+| [agent-trainer-harness](https://github.com/ogiberstein/agent-trainer-harness) | The project files above, copied into every project repo. |
+| [claude-thinking-skills](https://github.com/ogiberstein/claude-thinking-skills) | Optional thinking tools for reviews: `premortem`, `paranoid-review`, `mental-models`, `steelman`. |
 
 ## What is in this repo
 
 ```text
 templates/soul/       agent rulebook and role contracts for each Hermes profile
-templates/project/    AGENTS, BRIEF, STATUS, ROADMAP, DECISIONS templates
 templates/runtime/    config fragment: profile routing and per-channel prompts
 skills/               15 skills for Hermes and Claude Code (build, operating, communication)
 docs/                 build loop, profiles, runtime updates, preflight, smoke tests, security
@@ -119,11 +126,14 @@ A profile is its own Hermes home (rulebook, config, secrets, memory, skills, ses
 
 ### 6. Set up a project
 
+Copy the five project files from the harness into a new, empty project repo:
+
 ```bash
-python3 scripts/render_project_templates.py --project "My Project" --output ../my-project
+git clone https://github.com/ogiberstein/agent-trainer-harness.git
+cp -a agent-trainer-harness/lite/new-project/. ../my-project/
 ```
 
-It refuses to overwrite existing files unless you pass `--force`.
+Then open `start.md` in the new repo and follow it. For a repo that already exists, read the harness README first: it audits before copying and never overwrites existing rules. Add the build parameters from `docs/claude-hermes-build-loop.md` (section 8) to the project's `AGENTS.md` so builds know the gates and forbidden files.
 
 ### 7. Prove it end to end
 

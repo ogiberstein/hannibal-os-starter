@@ -31,7 +31,7 @@ Start from `templates/soul/`. Keep each profile's `SOUL.md` concise and explicit
 5. approval boundaries;
 6. escalation and handoff behavior.
 
-Keep durable project truth in `BRIEF.md`, `STATUS.md`, `ROADMAP.md`, `DECISIONS.md`, and `AGENTS.md`. Treat profile memory and session summaries as navigation, not proof.
+Keep durable project truth in `BRIEF.md`, `STATUS.md`, `ROADMAP.md`, `DECISIONS.md`, and `AGENTS.md`, taken from [agent-trainer-harness](https://github.com/ogiberstein/agent-trainer-harness). Treat profile memory and session summaries as navigation, not proof.
 
 ## Safe profile creation
 
