@@ -7,7 +7,8 @@ Public-safe changes to Hannibal OS Starter. Historical entries describe their ti
 - Added the Claude Code / Codex / Hermes build loop: README overview and the full orchestrator playbook in `docs/claude-hermes-build-loop.md`.
 - Added 12 skills (`spec-interview`, `writing-plans`, `overengineering-defence`, `implementation-plan-adversarial-review`, `hermes-build-operations`, `audit-router`, `agent-role-profile-design`, `true-stuck-check-reporting`, `workstream-kill-and-archive-docs`, `plain-style`, `anti-slop-agent-guardrails`, `user-interview-operator`). Moved the three earlier skills (handover bootstrap, status refresh, evidence gating) into `skills/operating/`. All 15 are grouped as build, operating and communication.
 - Added `scripts/install_skills.sh` for Hermes (category layout) and Claude Code (flat layout), with no-clobber by default.
-- Added role contracts for `chief_of_staff` and `default` under `templates/soul/`, and a `ROADMAP.md` project template.
+- Added the shared agent rulebook (`templates/soul/SOUL.md`) and role contracts for the three profiles (`chief_of_staff`, `default`, and a `cio` domain lead), plus a `ROADMAP.md` project template and a fuller `AGENTS.md` template.
+- Switched the routing example to the three-profile model: DM to `chief_of_staff`, markets channels to `cio`, project channels on `default` with channel prompts.
 - Updated the routing fragment for Hermes v0.22.x: Slack routes, `slack.channel_prompts`, and the rule that a route to a missing profile rejects that chat's messages. Dropped the retired allowlist note.
 - Added `scripts/hermes-runtime.sh` and `docs/runtime-updates.md`: side-by-side Hermes releases with a one-command rollback. Switch and rollback paths are tested with stand-in runtimes; the install path is not run end to end here.
 - Made the MVP quality bar explicit across the README, skills and role contracts.

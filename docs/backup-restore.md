@@ -6,14 +6,14 @@ Keep recovery proportional and separate runtime code from durable state.
 
 - **Replaceable runtime:** upstream Hermes source/package and its exact release/commit.
 - **Durable private state:** config, secrets, auth, profiles, memories, sessions, skills, cron, and state databases.
-- **Project truth:** private Git repositories containing `BRIEF.md`, `STATUS.md`, `DECISIONS.md`, `AGENTS.md`, and project artifacts.
+- **Project truth:** private Git repositories containing `AGENTS.md`, `BRIEF.md`, `STATUS.md`, `ROADMAP.md`, `DECISIONS.md`, and project artifacts.
 
 A runtime rollback is not automatically a state rollback. Stop if a newer runtime may have changed state in a way the previous version cannot read.
 
 ## Preferred approach
 
 - use upstream Hermes backup/export/checkpoint features that exist in the installed version;
-- keep one known previous-good runtime/version before supervised changes;
+- keep one known previous-good runtime/version before supervised changes (`docs/runtime-updates.md` shows one way);
 - use ordinary encrypted host/off-host backup appropriate to the value at risk;
 - document one short manual recovery path;
 - verify recovery only to the depth justified by the consequence of failure.

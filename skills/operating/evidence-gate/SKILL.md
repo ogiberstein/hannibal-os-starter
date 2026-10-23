@@ -29,7 +29,7 @@ PASS / PASS WITH RISKS / FAIL / INCONCLUSIVE
 | Claim | Evidence | Status |
 | --- | --- | --- |
 | Operator DM reaches `chief_of_staff` | ... | PASS / FAIL / INCONCLUSIVE |
-| Explicit project lane reaches its project profile | ... | PASS / FAIL / INCONCLUSIVE |
+| Explicit domain channel reaches its profile; project channel stays on default with its channel prompt | ... | PASS / FAIL / INCONCLUSIVE |
 | Unmatched traffic remains on `default` | ... | PASS / FAIL / INCONCLUSIVE |
 | Missing-route-target behavior matches the exact installed Hermes version | ... | PASS / FAIL / INCONCLUSIVE |
 | Gateway/runtime identity and rollback target are known | ... | PASS / FAIL / INCONCLUSIVE |

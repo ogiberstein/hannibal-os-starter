@@ -18,7 +18,7 @@ class TemplateTests(unittest.TestCase):
             "profile_routes:",
             "chat_id: CHAT_ID_HERE",
             "profile: chief_of_staff",
-            "profile: project_agent",
+            "profile: cio",
             "channel_prompts:",
             CHECKED_SOURCE,
         ]:
@@ -40,7 +40,7 @@ class TemplateTests(unittest.TestCase):
             self.assertTrue((ROOT / "templates/project" / name).exists())
 
     def test_role_contracts_use_placeholder_operator(self):
-        for name in ["chief_of_staff.role.md", "default.role.md"]:
+        for name in ["chief_of_staff.role.md", "default.role.md", "cio.role.md", "SOUL.md"]:
             text = (ROOT / "templates/soul" / name).read_text(encoding="utf-8")
             self.assertIn("OPERATOR", text)
 
@@ -60,6 +60,7 @@ class TemplateTests(unittest.TestCase):
             "https://github.com/ogiberstein/hannibal-os-starter.git",
             "docs/claude-hermes-build-loop.md",
             "docs/runtime-updates.md",
+            "### Three profiles",
         ]:
             self.assertIn(required, readme)
 
@@ -96,7 +97,7 @@ class TemplateTests(unittest.TestCase):
         text = (ROOT / "docs/smoke-test-playbook.md").read_text(encoding="utf-8")
         for required in [
             "Chief-of-Staff DM",
-            "Bounded project lane",
+            "Domain lead and project channels",
             "Unmatched fallback",
             "rejects that chat's messages",
             "One real build slice",

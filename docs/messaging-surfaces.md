@@ -14,10 +14,10 @@ gateway:
       platform: PLATFORM_NAME_HERE
       chat_id: CHAT_ID_HERE
       profile: chief_of_staff
-    - name: bounded-project-lane
+    - name: markets-channel
       platform: PLATFORM_NAME_HERE
-      chat_id: PROJECT_CHAT_ID_HERE
-      profile: project_agent
+      chat_id: MARKETS_CHAT_ID_HERE
+      profile: cio
 ```
 
 Merge this into the default profile's existing `config.yaml`; do not replace a working configuration wholesale. Use raw IDs only in private local config. Do not put them in this repo, screenshots, issues, logs, or support messages.

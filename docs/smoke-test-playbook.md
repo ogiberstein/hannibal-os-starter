@@ -6,9 +6,9 @@ Run only on a private test surface and only after the operator approves any requ
 
 Send a harmless message in the operator DM. Verify the active profile is `chief_of_staff`, the response uses the intended role contract, and no prior unrelated project session was inherited.
 
-## 2. Bounded project lane
+## 2. Domain lead and project channels
 
-Send a harmless message in one explicitly routed project lane. Verify the intended project profile receives it and uses the correct project/control docs.
+Send a harmless message in a channel routed to a domain profile (for example `cio`). Verify that profile answers with its own role contract. Then send one in a project channel that stays on `default` and verify its channel prompt points the agent at the right repo and control docs.
 
 ## 3. Unmatched fallback
 

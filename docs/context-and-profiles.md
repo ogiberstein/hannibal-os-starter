@@ -10,7 +10,8 @@ The recommended example is:
 
 - `chief_of_staff` is the persistent operator/DM front door for cross-project judgment, prioritization, escalation, retrospectives, and control-doc coherence;
 - `default` handles unmatched traffic and general project work;
-- project profiles receive only explicit bounded routes;
+- a domain lead such as `cio` receives only its explicitly routed channels;
+- project channels stay on `default` and get their context from channel prompts;
 - project escalation returns to the operator/DM lane rather than creating hidden cross-project authority.
 
 Broad tools and end-to-end accountability do not authorize unilateral production, route, service, credential, permission, destructive, customer-data, or funds-impacting changes.

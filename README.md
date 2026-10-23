@@ -20,6 +20,18 @@ Three agents and one human, each with a clear job:
 
 Slack is the conversation. The repo is the record.
 
+### Three profiles
+
+Hermes runs as three profiles from one gateway. Each has its own rulebook, memory, skills and sessions:
+
+| Profile | Gets | Owns |
+| --- | --- | --- |
+| `chief_of_staff` | Your DM | Cross-project priorities, check-ins on long runs, escalation, keeping the system itself simple. |
+| `default` | Every chat no route claims, including project channels | Engineer and PM: interviews, builds, project status. Each project channel gets its context from a channel prompt. |
+| `cio` | Your markets channels | A domain lead, here for markets and investing: research, backtests, dashboards. No trades, transfers or spend without your approval. |
+
+Start with `default` alone. Add `chief_of_staff` when you run more than one project. Add a domain lead only when a recurring kind of work needs its own memory and limits. Role contracts for all three are in `templates/soul/`.
+
 ### The build loop
 
 1. **Interview.** Hermes asks one question at a time until you agree what is in, what is out, and how you will know it works. Skill: `spec-interview`.
@@ -92,18 +104,18 @@ Existing skills with the same name are skipped unless you pass `--force`. For a 
 
 ### 4. Give each agent its rulebook
 
-Each Hermes profile reads its own `SOUL.md`. Start from the files in `templates/soul/`: put the role contract for that profile on top, replace `OPERATOR`, and cut any rule that does not match how you work. Short rulebooks get followed. Long ones get skimmed.
+Each Hermes profile reads its own `SOUL.md`. Copy `templates/soul/SOUL.md` into each profile, put that profile's role contract on top (`default.role.md`, `chief_of_staff.role.md`, `cio.role.md`), replace `OPERATOR`, and cut any rule that does not match how you work. Short rulebooks get followed. Long ones get skimmed.
 
 ### 5. Add profiles and routing (when you want more than one agent)
 
 ```bash
 hermes profile create chief_of_staff
-hermes profile create project_agent     # or delete that route from the fragment
+hermes profile create cio     # optional domain lead; or delete its route from the fragment
 ```
 
-Every profile a route names must exist; a route to a missing profile makes Hermes reject that chat's messages. Then merge `templates/runtime/config.yaml.example` into the **default** profile's `config.yaml`. It sends your DM to `chief_of_staff`, one project channel to a project profile, and everything else to `default`. It also shows `slack.channel_prompts`, which gives a channel its project context without a new profile. Often that is all you need.
+Every profile a route names must exist; a route to a missing profile makes Hermes reject that chat's messages. Then merge `templates/runtime/config.yaml.example` into the **default** profile's `config.yaml`. It sends your DM to `chief_of_staff`, your markets channel to `cio`, and everything else to `default`. Project channels stay on `default` and get their context from `slack.channel_prompts`, which points each channel at its repo without a new profile. Often that is all you need.
 
-A profile is its own Hermes home (rulebook, config, secrets, memory, skills, sessions). It is not a filesystem sandbox. Read the `agent-role-profile-design` skill before adding a third.
+A profile is its own Hermes home (rulebook, config, secrets, memory, skills, sessions). It is not a filesystem sandbox. Read the `agent-role-profile-design` skill before adding another.
 
 ### 6. Set up a project
 
@@ -115,7 +127,7 @@ It refuses to overwrite existing files unless you pass `--force`.
 
 ### 7. Prove it end to end
 
-From a test chat: your DM reaches `chief_of_staff`; a project channel reaches its profile; an unrouted channel stays on `default`; one small slice goes through interview, spec, build, review and merge. Config parsing and green tests here are not that proof. See `docs/smoke-test-playbook.md`.
+From a test chat: your DM reaches `chief_of_staff`; a markets channel reaches `cio`; a project channel stays on `default` and knows its repo; one small slice goes through interview, spec, build, review and merge. Config parsing and green tests here are not that proof. See `docs/smoke-test-playbook.md`.
 
 ## Skills
 

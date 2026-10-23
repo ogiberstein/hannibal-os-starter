@@ -9,16 +9,19 @@ gateway:
   # Send specific chats to specific profiles. Most specific match wins
   # (user_id > thread_id > chat_id > guild_id). Unmatched chats stay on default.
   # Every target profile must exist, or that chat's messages are rejected.
+  # Three profiles: chief_of_staff owns your DM, cio (a domain lead, here for
+  # markets) owns its channels, and default handles every other chat, including
+  # project channels, which get their context from channel_prompts below.
   profile_routes:
     - name: operator-dm
       platform: slack
       chat_id: CHAT_ID_HERE
       profile: chief_of_staff
 
-    - name: bounded-project-lane
+    - name: markets-channel
       platform: slack
-      chat_id: PROJECT_CHAT_ID_HERE
-      profile: project_agent
+      chat_id: MARKETS_CHAT_ID_HERE
+      profile: cio
 
 slack:
   # Per-channel context injected on every turn. Often enough on its own: you

@@ -35,6 +35,7 @@ The public starter must not become another runtime, router, deployment system, r
 
 - `chief_of_staff`: persistent operator/DM front door and operating-system steward.
 - `default`: unmatched fallback and general project operator.
-- project profiles: optional bounded lanes for explicit projects or responsibilities.
+- `cio`: an optional domain lead (here markets and investing) routed to its own channels.
+- project channels: stay on `default`, with per-channel context from `slack.channel_prompts`.
 
 Routing chooses context. It does not expand authority: credentials, services, routes, production, destructive actions, customer data, and funds remain approval-gated.
