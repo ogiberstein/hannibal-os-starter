@@ -1,7 +1,7 @@
 ---
 name: hermes-build-operations
 description: "Use when Hermes receives, runs, resumes, or hands back a build that an orchestrator (such as Claude Code) dispatched over Slack. Builder-side contract: scope, commit and push per item, continuation triggers, mid-run thread posts, and the approvals Hermes cannot grant itself."
-version: 1.0.0
+version: 1.1.0
 author: Hannibal OS Starter
 license: MIT
 metadata:
@@ -62,6 +62,19 @@ The orchestrator-side rules live in the companion guide
 8. **Signed-commit repos.** If the host holds no signing key, use the method
    the project names, such as GitHub's GraphQL `createCommitOnBranch`, which
    GitHub signs. Never add a signing key to the host yourself.
+9. **Check whether `main` moved before item 1.** Orchestrators often commit
+   state files to `main` right after dispatching. Compare
+   `git ls-remote origin refs/heads/main` with the commit you branched from.
+   If it moved and your branch has no commits yet, fast-forward the branch
+   (`git merge --ff-only main` after pulling `main`). Post that SHA with one
+   line saying what moved; it is your "main untouched" baseline.
+10. **Keep handback evidence outside scratch space.** A build that waits days
+    for the owner's device checks outlives a scratch directory that prunes
+    idle files. Keep the status file, suite outputs, check outputs and the
+    pull-request body draft in a per-build directory. On resume, before any
+    write: `date -u`, `git fetch`, local tip equals the remote branch tip,
+    and the services the brief deployed are active. Rerun scripted checks to
+    regenerate lost outputs; do not quote old thread messages instead.
 
 ## Continuation triggers
 
@@ -75,9 +88,20 @@ The orchestrator-side rules live in the companion guide
 - **Remediation rounds** arrive as a new message in the same thread, after the
   orchestrator commits the audit record to `main`. Resume from your last
   pushed tip. Read the findings with `git show origin/main:<path>`. Fix them
-  group by group (R1, R2, ...), adding the exact test each finding names. One
-  commit per group, pushed. Hand back FIXED or NOT FIXED per finding, with
+  group by group (R1, R2, ...), adding the exact test each finding names.
+  Follow the round's commit rule (one commit per group, or per finding if it
+  says so), pushed after each. Hand back FIXED or NOT FIXED per finding, with
   evidence.
+  - If the audit arrives as "part 1 of N", do only a read-only freshness
+    check until the last part lands. Later parts often add items and the
+    deploy and handback steps.
+  - Prove each new test fails on the old code before you commit it, for
+    example `git stash push <fixed file>`, run the test, `git stash pop`, run
+    it again.
+  - If a finding's literal reproduction passes on the old code, do not claim
+    it failed. Find the mechanism the finding names, build a deterministic
+    reproduction, and fix that. Say plainly in the handback which case
+    passed before the fix and which case failed.
 - On "commit, push, then stop for good", do exactly that and post the final SHA.
 - Provider, rate-limit, or billing errors are not yours to fix. State the
   exact error in the thread. The operator has to act.
@@ -99,10 +123,47 @@ The orchestrator-side rules live in the companion guide
 - **Mangled strings.** Slack turns URLs, and file names with domain-like
   extensions, into links. Strip `<...|...>` link wrappers and confirm exact
   values against the repo before using them.
-- A new in-thread message interrupts your current turn. After an interrupt,
-  check branch and process state before you continue.
+- A new in-thread message reaches you while you work. With busy-input mode
+  `interrupt` (the upstream default) it can abort a running tool call; with
+  `steer` it arrives after the next tool call; with `queue` it waits for
+  your next turn. Either way, check branch and process state before you act
+  on it.
+- **Recurring status line.** When the brief asks for one line every few
+  minutes, create a cron job with `no_agent` and a small script that prints
+  `HH:MM UTC | <contents of a status file>`. Cron scripts must live in the
+  profile's `scripts/` directory under `HERMES_HOME`; only the status file
+  goes in the per-build directory. Set `deliver` explicitly to
+  `slack:<channel_id>:<thread_ts>`: a job created from a thread can record
+  its origin without the thread, so the default delivery posts in the
+  channel. Check the job's `origin` and `deliver` after creating it.
+  Overwrite the status file at each step (`item N | <doing what>`). Remove
+  the job and its script when the brief says, and at handback.
+- Do not use `cronjob run` on that job for one-off posts. Each run sends a
+  completion notice back into your conversation as a new turn, and each
+  reply becomes another thread post. Use `chat.postMessage` for one-offs.
 - Before a long gate run, post one line with the expected duration. Silence
   you announced reads as work, not as a stall.
+
+## Before handback: self-review
+
+Run this before you hand back, and before you open the pull request if the
+brief says you open it. These are the findings an independent reviewer most
+often returns as P1 on small services:
+
+- read-then-write races (a value computed by one read and written by a
+  later statement; make it one statement or one locked transaction);
+- unbounded body reads and missing read deadlines;
+- input that cannot be parsed or stored (oversized ids, invalid text)
+  escaping as a dropped connection instead of a 4xx;
+- exceptions that leave the handler without a 500 and a one-line log;
+- auth-gate tests that count verifier calls but never check the reply;
+- fail-closed branches no test forces;
+- tests that still pass with the feature removed (remove the rule, run
+  the test, confirm it fails, restore it).
+
+For a web page, `curl` proves only that the file is served. Drive the page
+in a headless browser through the brief's steps, and report that as an extra
+check beyond the brief.
 
 ## Approvals you cannot grant yourself
 
@@ -137,6 +198,19 @@ evidence (see `anti-slop-agent-guardrails`). Once the orchestrator accepts the
 handback, do not commit to that branch again. It may add its own commits and
 open the pull request.
 
+- **Long outputs get cut.** Gateway notices and thread copies can truncate
+  long curl or test output. Put the full output in the pull-request body too.
+- **Leak-scan the branch diff, the commit messages
+  (`git log --format=%B origin/main..HEAD`) and the pull-request body** with a
+  small script that reads the sensitive values (domain, server address, keys)
+  from your env files and prints only true or false per value. Values on a
+  command line end up in logs.
+- **Editing an open pull request's body** (when you opened it). Read it with
+  `gh api repos/<owner>/<repo>/pulls/<n> --jq .body > <file>`, edit the file,
+  then write it back with `gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -F body=@<file>`.
+  `gh pr edit` can fail on some repos without saving the body, so confirm the
+  new text is there before you post the handback.
+
 ## What the orchestrator watches
 
 Knowing this keeps you visible:
@@ -145,7 +219,7 @@ Knowing this keeps you visible:
 - **Thread content**, diffed between reads. You stream progress by editing one
   message in place, so keep that message current.
 - **Silence**: no push and no thread change past its cadence window means a
-  suspected stall. It sends one mentioned probe, which interrupts you.
+  suspected stall. It sends one mentioned probe, which lands in your turn.
 - **CI or preview status** on every push. A red preview comes back as a small
   follow-up with the exact error.
 

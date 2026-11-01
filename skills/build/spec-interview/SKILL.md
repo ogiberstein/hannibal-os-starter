@@ -1,7 +1,7 @@
 ---
 name: spec-interview
 description: "Use when requirements are unclear enough that writing a spec would force the agent to invent product decisions. Runs an adaptive, file-backed interview after project setup, one question at a time, and ends with an owner-confirmed shared model."
-version: 1.0.0
+version: 1.0.1
 author: Hannibal OS Starter
 license: MIT
 metadata:
@@ -229,6 +229,11 @@ Write a compact proposed model:
 
 Ask once: "Is this now the shared model, or what is still wrong?" If corrected,
 re-show only the affected part. No execution-ready spec until confirmed.
+
+If you drafted questions from sources or deferred them instead of asking
+them, list each one with a one-line reason in the confirmation message, not
+only at a checkpoint. If a request after confirmation reopens a derived rule,
+ask that one question before you tag or mark the work complete.
 
 Default to the MVP bar: simplicity and speed beat polish, no backwards
 compatibility unless asked. Raise the bar only for money, secrets, customer or

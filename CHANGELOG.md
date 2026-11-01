@@ -2,6 +2,15 @@
 
 Public-safe changes to Hannibal OS Starter. Historical entries describe their time; they are not current operating instructions.
 
+## 2026-11-01 — Monthly refresh: build guide v35, builder skill, host basics
+
+- Build guide (`docs/claude-hermes-build-loop.md`) is now the public edition of private guide v35 (dated 22 October 2026). New: carry each audit round's findings into the next prompt with a FIXED / NOT FIXED / PARTIALLY FIXED line per finding; a docs check on the brief before round 1; how `display.busy_input_mode` (`interrupt` or `steer`) changes in-thread messages; restate earlier instructions instead of pointing at them; cron status lines for time-boxed live events; reading long threads saved to a file; background Codex runs in the Claude desktop app; `printf '%s'` for hash re-derivation; probe audit models before every audit.
+- `hermes-build-operations` 1.1.0: check whether `main` moved before item 1, a per-build evidence directory for long waits, a fuller remediation-round procedure, a pre-handback self-review checklist, a `no_agent` cron status line with an explicit thread target, leak scans that print only true/false, and editing a pull-request body with `gh api`.
+- `spec-interview` 1.0.1: list drafted or deferred questions with reasons at confirmation, and ask before tagging when a later request reopens a derived rule.
+- `docs/runtime-updates.md`: check MCP tools after every restart, and run experiments in a separate runtime copy rather than only a scratch `HERMES_HOME` (upstream issue #143259).
+- `docs/security-boundaries.md`: host basics for an always-on agent server (key-only SSH, default-deny firewall, no public dashboard route, narrow credentials).
+- Checked: the latest Hermes release is still v0.22.5, so the compatibility section is unchanged. The busy-input default was checked in v0.22.2 and v0.22.5 source; `no_agent` cron jobs and `platform:chat_id:thread_id` delivery in v0.22.2 source. No live gateway was changed or exercised.
+
 ## 2026-10-23 — Build loop, skills, and Hermes v0.22
 
 - Later the same day: removed `templates/project/` and `scripts/render_project_templates.py`. The five project files now come only from [agent-trainer-harness](https://github.com/ogiberstein/agent-trainer-harness); the README names the three repos and what each is for.

@@ -1,6 +1,6 @@
 # The Claude–Hermes build loop
 
-**Version:** public edition of private guide v32 (dated 2 October 2026), published 23 October 2026. Rules marked as observed defaults reflect that date; check them against your current Hermes release.
+**Version:** public edition of private guide v35 (dated 22 October 2026), refreshed 1 November 2026. Rules marked as observed defaults reflect that date; check them against your current Hermes release.
 
 This guide is for a Claude Code session that dispatches, monitors, or
 verifies a build run by Hermes Agent. Four roles take part:
@@ -70,6 +70,13 @@ is a re-run.
   remediate-and-re-audit cycles. A PASS on the last permitted round is a pass.
 - A scope that passed carries forward unless a later fix touches its files
   or something it depends on.
+- From round 2, paste the previous round's findings block into the prompt
+  word for word. Require one FIXED, NOT FIXED or PARTIALLY FIXED line per
+  finding before the full sweep. Convergence then shows in those lines, and
+  a finding cannot be argued again unnoticed.
+- Run a docs check on the brief before round 1, even when it feels
+  redundant. It finds internal contradictions the auditor would otherwise
+  spend round 1 on.
 - Extra rounds need the owner. Scope them to the last round's findings:
   FIXED or NOT FIXED for each, then "did the fixes add a new P1?"
 - **Oscillation stop.** One round correcting the last round's premise is
@@ -118,9 +125,17 @@ the brief's docs check; never the Codex handback audit or merged-tree gates.
 - **Hermes sees only its own thread**, and only mentioned messages in it.
   Anything it must read goes there or in the repo. A mention in the channel,
   even an aside, starts a new session.
-- **In-thread messages interrupt the active turn** and can abort a tool call
-  (busy-input mode `interrupt`). Stay quiet during long gate runs unless the
-  message changes the work.
+- **What an in-thread message does to a busy session depends on
+  `display.busy_input_mode`** in the builder profile's config. The upstream
+  default, `interrupt`, redirects the run and can abort a running tool call.
+  With `steer`, Hermes replies "Steered into current run" and folds the
+  message in after the next tool call, without aborting it. Either way the
+  message changes the run, so stay quiet during long gate runs unless it
+  changes the work.
+- **Restate what a later message needs.** Never point at an earlier message
+  by name ("do it as in my second message"). After context compression
+  Hermes no longer holds it and spends turns searching its own logs. Repeat
+  the operative lines briefly.
 - **A fresh session inherits the checkout's current branch.** Name the branch
   and say "pull latest main first" in any dispatch that writes files.
 - **Signed-commit repos.** Keep signing keys off the VPS. Hermes commits
@@ -163,14 +178,14 @@ Do not merge, deploy, or edit AGENTS.md.
 - **A summary with a continuation trigger is not a death.** Hermes posts the
   same shape as a mid-run checkpoint and resumes within minutes. Only an
   explicit "iteration budget exhausted" line or a provider or billing error
-  marks a stop. A "continue" sent on the summary alone interrupts a live turn.
+  marks a stop. A "continue" sent on the summary alone redirects a live turn.
 - **A checkpoint with no trigger line is decided by the clock.** Self-resumes
   have come within about four minutes, so probe that shape at 8 minutes of
   silence. Use 15 minutes for every other silence.
 - **Diff before you continue.** Compare the last bot message with your
   previous read. If the session is alive, send nothing. A duplicate
-  "continue" interrupts the turn. A duplicate top-level mention starts a
-  second writer that can repeat commits, deploys, and posts.
+  "continue" redirects the live turn and wastes it. A duplicate top-level
+  mention starts a second writer that can repeat commits, deploys, and posts.
 - **Stopping a duplicate.** Post `<@YOUR_HERMES_BOT_USER_ID> !stop` as a
   mentioned reply in the duplicate's own thread (Slack blocks native slash
   commands in threads). The stop is unconfirmed until that thread shows a
@@ -218,7 +233,9 @@ No single signal covers every failure, so the contract layers them.
    Re-arm both watchers on every wake.
 5. **Read thread replies, not channel history**, with no cursor and a high
    limit. In some Slack clients a cursor returns messages up to that point,
-   which hides the newest one, the one you are waiting for.
+   which hides the newest one, the one you are waiting for. When a long
+   thread overflows the read and the tool saves the result to a file, parse
+   the file and print only messages newer than the last one you saw.
 6. **Diff content; do not count messages.** Hermes edits one progress
    message in place.
 7. **Heartbeat.** Append one line (UTC time and state) per wake to
@@ -235,6 +252,11 @@ No single signal covers every failure, so the contract layers them.
     provider fallback) get one probe after about 15 minutes, then hourly. A
     probe costs a message; a passive night costs the night. Go passive only
     when a human must act (revoked auth, spend cap), and say so.
+12. **Time-boxed live events** (a demo, a launch window, a match): ask Hermes
+    at dispatch to run a Hermes cron job that posts a status line into the
+    dispatch thread every few minutes, and to remove it when the watched
+    process exits. Hermes's own messages lag while it works, so the cron line
+    is the only steady signal. Arm it before the event starts.
 
 ## 6. During-build hygiene
 
@@ -255,10 +277,14 @@ No single signal covers every failure, so the contract layers them.
 - **Recipe.** `git worktree add --detach <tmp> <frozen-tip>`, then
   `codex exec -s read-only "<prompt>" -C <tmp> -c 'model_reasoning_effort="high"'`.
   Wrap small runs in `timeout 540` with stdout to a file. Detach larger ones
-  (`nohup timeout 840 codex exec ... > out 2>&1 < /dev/null &`) and poll.
+  (`nohup timeout 840 codex exec ... > out 2>&1 < /dev/null &`) and poll. In
+  the Claude desktop app, a Bash call with `run_in_background` and
+  `timeout 840` replaces nohup and the poller: the app wakes the session
+  when the command exits.
 - **Polling.** Never `pgrep -f` the command text (your polling shell
   matches itself) or grep the whole log for `VERDICT:` (Codex echoes files
-  it reads). Read the final answer block.
+  it reads). Read the final answer block: the text after the last standalone
+  `codex` marker line, up to `tokens used`.
 - **Split by scope.** A broad prompt over a large diff dies before its
   verdict. Give each parallel run a file list, at most eight questions, and
   "start from `git diff <base> HEAD -- <paths>`". Fix re-checks fit one run.
@@ -272,7 +298,10 @@ No single signal covers every failure, so the contract layers them.
   audit. Example: a recorded block timestamp against that block's header.
   The brief names the method. A value with no second method is listed as
   unverified. Why: checking code against the brief and tests against
-  fixtures inherits every error the fixtures carry.
+  fixtures inherits every error the fixtures carry. When the second method
+  is an HMAC or hash over a pasted body, feed the body with `printf '%s'` or
+  from a file, never as the `printf` format string: `%` sequences in the
+  body (URL-encoded text) change the bytes and the digest.
 - **Mutation runs on safety-core tests**, before the Codex audit: remove the
   rule a test names and run it. A test that stays green protects nothing.
   Never mutate the worktree a reviewer is reading.
@@ -285,10 +314,13 @@ No single signal covers every failure, so the contract layers them.
   Scope the re-audit to the fix commits.
 - **Model policy.** Your strongest reasoning model for spec audits (highest
   leverage per token); the CLI default for handback audits (the time cap is
-  the risk). Pass it per invocation (`-m <model>`), not in global config.
-  Probe it first with a one-word prompt; if that fails, tell the owner and
-  never fall back silently. Report the model used, from the session log,
-  next to the verdict.
+  the risk). If the default stops answering, ask the owner which model to
+  use; a strong model at medium reasoning effort, split by scope, usually
+  fits the cap. Pass the model per invocation (`-m <model>`), not in global
+  config. Probe both models with a one-word prompt before every audit,
+  because an account can stop accepting a model that worked last week. If
+  the probe fails, tell the owner and never fall back silently. Report the
+  model used, from the session log, next to the verdict.
 - **If Codex is unavailable**, ask the owner before using a substitute,
   usually fresh-context Claude subagents in the same pinned worktree with
   the same prompts and verdict format. Record the substitution.

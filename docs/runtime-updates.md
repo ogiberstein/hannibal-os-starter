@@ -55,6 +55,8 @@ After a switch, send one real message to the bot and check the reply arrives. A 
 - **Read the release notes.** Look for config migrations. A new release may rewrite settings in every profile's `config.yaml` on first start. If you want to keep your current values, back up each profile's `config.yaml` first and diff it after the switch.
 - **Back up the session database once** before a major version. Newer releases may migrate it on first start. Check the notes for whether the previous release can still read it.
 - **Restart anything else that runs Hermes code** (desktop backends, long-running CLI sessions). They keep old code in memory.
+- **Check your MCP tools after every restart.** Ask the agent to list them, or check the gateway log. On v0.22.x a missing MCP dependency is logged only at debug level, so a gateway can come back healthy with no MCP tools.
+- **Experiment in a separate runtime copy, not only a separate `HERMES_HOME`.** On v0.22.2 a `hermes` command run under a scratch home can still write dependency state for the shared install. The next gateway restart may then load a reduced environment, for example without MCP ([upstream issue #143259](https://github.com/NousResearch/hermes-agent/issues/143259), open when this was written). Use `hermes-runtime install` into a scratch `HERMES_RUNTIME_ROOT` for plugin or config experiments.
 - **Keep one previous release.** Delete older folders by hand once the new one has run for a few days.
 
 ## What the install step does
